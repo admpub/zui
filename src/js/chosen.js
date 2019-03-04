@@ -116,6 +116,7 @@ MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
                         group_array_index: group_position,
                         classes: option.className,
                         style: option.style.cssText,
+                        data: option.getAttribute('data-data'),
                         search_keys: ($.trim(option.getAttribute('data-keys') || '') + option.value).replace(/,/, ' ')
                     });
                 } else {
@@ -204,7 +205,7 @@ MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
             this.max_selected_options = this.options.max_selected_options || Infinity;
             this.drop_direction = this.options.drop_direction || 'auto';
             this.middle_highlight = this.options.middle_highlight;
-            this.compact_search = this.options.compact_search || true;
+            this.compact_search = this.options.compact_search || false;
             this.inherit_select_classes = this.options.inherit_select_classes || false;
             this.display_selected_options = this.options.display_selected_options != null ? this.options.display_selected_options : true;
             return this.display_disabled_options = this.options.display_disabled_options != null ? this.options.display_disabled_options : true;
@@ -305,6 +306,7 @@ MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
             option_el.style.cssText = option.style;
             option_el.title = option.title;
             option_el.setAttribute("data-option-array-index", option.array_index);
+            option_el.setAttribute("data-data", option.data);
             option_el.innerHTML = option.search_text;
             return this.outerHTML(option_el);
         };
@@ -650,7 +652,9 @@ MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
             } else {
                 this.container.html('<a class="chosen-single chosen-default" tabindex="-1"><span>' + this.default_text + '</span><div><b></b></div><div class="chosen-search"><input type="text" autocomplete="off" /></div></a><div class="chosen-drop"><ul class="chosen-results"></ul></div>');
                 if (this.compact_search) {
-                    this.container.find('.chosen-search').appendTo(this.container.find('.chosen-single'));
+                    this.container.addClass('chosen-compact').find('.chosen-search').appendTo(this.container.find('.chosen-single'));
+                } else {
+                    this.container.find('.chosen-search').prependTo(this.container.find('.chosen-drop'));
                 }
             }
             this.form_field_jq.hide().after(this.container);
@@ -887,6 +891,7 @@ MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
             if(el.length) {
                 this.result_clear_highlight();
                 this.result_highlight = el;
+
                 this.result_highlight.addClass("highlighted");
                 maxHeight = parseInt(this.search_results.css("maxHeight"), 10);
                 resultHeight = this.result_highlight.outerHeight();
@@ -894,7 +899,8 @@ MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
                 visible_bottom = maxHeight + visible_top;
                 high_top = this.result_highlight.position().top + this.search_results.scrollTop();
                 high_bottom = high_top + resultHeight;
-                if(this.middle_highlight && (canMiddleHighlight || this.middle_highlight === 'always' || high_bottom >= visible_bottom || high_top < visible_top)) {
+
+                if(this.middle_highlight && (canMiddleHighlight || this.middle_highlight === 'always')) {
                     scrollTop = Math.min(high_top - resultHeight, Math.max(0, high_top - (maxHeight - resultHeight)/2));
                 } else if(high_bottom >= visible_bottom) {
                     scrollTop = (high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0;
@@ -903,6 +909,8 @@ MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
                 }
                 if(scrollTop > -1) {
                     this.search_results.scrollTop(scrollTop);
+                } else if (this.result_highlight.scrollIntoView) {
+                    this.result_highlight.scrollIntoView();
                 }
             }
         };
@@ -924,7 +932,6 @@ MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
             this.results_showing = true;
             this.search_field.focus();
             this.search_field.val(this.search_field.val());
-            this.winnow_results(1);
 
             var dropDirection = this.drop_direction;
             if ($.isFunction(dropDirection))
@@ -944,6 +951,8 @@ MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
                 }
             }
             this.container.toggleClass('chosen-up', dropDirection === 'up').addClass("chosen-with-drop");
+
+            this.winnow_results(1);
 
             return this.form_field_jq.trigger("chosen:showing_dropdown", {
                 chosen: this
