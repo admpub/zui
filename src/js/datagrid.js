@@ -153,7 +153,7 @@
         options        = $.extend({}, DataGrid.DEFAULTS, that.$.data(), options);
 
         var lang   = options.lang || 'zh_cn';
-        that.lang  = $.isPlainObject(lang) ? ($.extend(true, {}, LANG[lang.lang || $.zui.clientLang()], lang)) : LANG[lang];
+        that.lang  = $.isPlainObject(lang) ? ($.extend(true, {}, LANG.en, LANG[lang.lang || $.zui.clientLang()], lang)) : (LANG[lang] || LANG.en);
 
         options.valueOperator    = $.extend({}, DEFAULT_VALUE_OPERATOR, options.valueOperator);
         options.rowDefaultHeight = options.rowDefaultHeight || 30;
@@ -239,8 +239,16 @@
         var isWindows = window.navigator.userAgent.match(/Win/i);
         if (isWindows) mouseWheelFactor *= 20;
         $container.on('mousewheel', function(event) {
-            that.scroll(that.layout.scrollLeft - Math.round(event.deltaX * mouseWheelFactor), that.layout.scrollTop - Math.round(event.deltaY * mouseWheelFactor));
-            event.preventDefault();
+            // check whether need scroll
+            var layout = that.layout;
+            var scrollLeft = layout.scrollLeft - Math.round(event.deltaX * mouseWheelFactor);
+            var scrollTop = layout.scrollTop - Math.round(event.deltaY * mouseWheelFactor);
+            scrollLeft = Math.max(0, Math.min(scrollLeft, layout.width - layout.containerWidth));
+            scrollTop = Math.max(0, Math.min(scrollTop, layout.height - layout.containerHeight));
+            if (scrollLeft !== layout.scrollLeft || scrollTop !== layout.scrollTop) {
+                that.scroll(scrollLeft, scrollTop);
+                event.preventDefault();
+            }
         });
 
         that.$container = $container;
@@ -407,6 +415,10 @@
 
     DataGrid.prototype.goToPage = function(page) {
         return this.setPager(page).render();
+    };
+
+    DataGrid.prototype.gotoPage = function(page) {
+        return this.page(page);
     };
 
     DataGrid.prototype.setSearch = function(searchStr) {
@@ -1599,4 +1611,3 @@
         $('[data-ride="datagrid"]').datagrid();
     });
 }(jQuery, undefined));
-

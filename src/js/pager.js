@@ -2,7 +2,7 @@
  * ZUI: pager.js
  * http://zui.sexy
  * ========================================================================
- * Copyright (c) 2017-2018 cnezsoft.com; Licensed MIT
+ * Copyright (c) 2017-2019 cnezsoft.com; Licensed MIT
  * ======================================================================== */
 
 
@@ -55,7 +55,7 @@
             goto: 'Goto',
             pageOf: 'Page <strong>{page}</strong>',
             totalPage: '<strong>{totalPage}</strong> pages',
-            totalCount: '<strong>{recTotal}</strong> in total',
+            totalCount: 'Total: <strong>{recTotal}</strong> items',
             pageSize: '<strong>{recPerPage}</strong> per page',
             itemsRange: 'From <strong>{start}</strong> to <strong>{end}</strong>',
             pageOfTotal: 'Page <strong>{page}</strong> of <strong>{totalPage}</strong>'
@@ -71,7 +71,7 @@
         options = that.options = $.extend({}, Pager.DEFAULTS, this.$.data(), options);
 
         var lang   = options.lang || $.zui.clientLang();
-        that.lang  = $.isPlainObject(lang) ? ($.extend(true, {}, LANG[lang.lang || $.zui.clientLang()], lang)) : LANG[lang];
+        that.lang  = $.isPlainObject(lang) ? ($.extend(true, {}, LANG.en, LANG[lang.lang || $.zui.clientLang()], lang)) : (LANG[lang] || LANG.en);
 
         that.state = {};
 
@@ -364,6 +364,7 @@
     };
 
     Pager.NAME = NAME;
+    Pager.LANG = LANG;
 
     $.fn.pager.Constructor = Pager;
 
@@ -372,4 +373,3 @@
         $('[data-ride="pager"]').pager();
     });
 }(jQuery, undefined));
-

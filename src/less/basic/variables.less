@@ -118,7 +118,7 @@
 // TYPOGRAPHY
 
 // Font family.
-@font-family-sans-serif:  "Helvetica Neue", Helvetica, Tahoma, Arial, 'Microsoft Yahei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif;
+@font-family-sans-serif:  "Helvetica Neue", Helvetica, Tahoma, Arial, 'PingFang SC', 'Source Han Sans CN', 'Source Han Sans', 'Source Han Serif', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', 'Microsoft YaHei', sans-serif;
 @font-family-headings:    @font-family-sans-serif;
 @font-family-serif:       Georgia, "Times New Roman", Times, serif;
 @font-family-monospace:   Monaco, Menlo, Consolas, "Courier New", monospace;
@@ -430,6 +430,8 @@
 @modal-content-border-color:                   rgba(0,0,0,.2);
 @modal-content-fallback-border-color:          #999;
 
+@modal-shadow:                0 3px 9px rgba(0,0,0,.5);
+@modal-screen-shadow:         0 5px 15px rgba(0,0,0,.5);
 @modal-backdrop-bg:           #000;
 @modal-header-border-color:   #e5e5e5;
 @modal-footer-border-color:   @modal-header-border-color;
@@ -682,7 +684,7 @@
 @close-color:                 @color-black;
 @close-font-weight:           bold;
 @close-text-shadow:           0 1px 0 @color-light;
-
+@close-font-size:             @font-size-base * 1.5;
 
 // TOOLTIPS
 
@@ -742,3 +744,11 @@
 @avatar-size-lg:            40px;
 @avatar-size-sm:            20px;
 @avatar-size-xl:            70px;
+
+// INPUT CONTROL
+
+@input-control-icon-size: 30px;
+@input-control-normal-opacity: .5;
+@input-control-label-width: 70px;
+@input-control-label-width-sm: 55px;
+@input-control-label-width-lg: 95px;

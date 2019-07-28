@@ -9,8 +9,6 @@
 /// GNU LESSER GENERAL PUBLIC LICENSE
 /// https://github.com/kindsoft/kindeditor/blob/master/license.txt
 /// ========================================================================
-@border-radius-base: 0;
-
 // Kindeditor theme in ZUI style
 
 /*! KindEditor Copyright (C) kindsoft.net, Licence: http://kindeditor.net/license.php */
@@ -131,7 +129,7 @@
   overflow: hidden;
   margin: 0;
   padding: 0;
-  .transition(~"border-color ease-in-out .15s, box-shadow ease-in-out .15s");
+  // .transition(~"border-color ease-in-out .15s, box-shadow ease-in-out .15s");
   &.focus
   {
     @color:       @input-border-focus;
@@ -139,6 +137,13 @@
     border-color: @color;
     outline: 0;
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px @color-rgba;
+  }
+
+  &.ke-loading {
+    > .ke-toolbar,
+    > .ke-edit,
+    > .ke-statusbar,
+    + textarea.kindeditor {display: none}
   }
 }
 /* toolbar */
@@ -899,4 +904,15 @@
 .ke-plugin-filemanager-body .ke-table .ke-datetime {
   width: 30%;
   text-align: center;
+}
+
+.ke-dialog {
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+  }
+  input[type=number] {
+      -moz-appearance:textfield;
+  }
 }

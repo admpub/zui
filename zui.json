@@ -439,7 +439,7 @@
       "src": {
         "less": ["~/controls/loading.less"]
       },
-      "ver": "1.8.1"
+      "ver": "1.9.0"
     },
     "table.basic": {
       "name": "基本表格",
@@ -998,7 +998,7 @@
         "js": ["src/js/menu.js"]
       },
       "ver": "1.0.0",
-      "dpds": ["basic", "navs", "button"],
+      "dpds": ["basic", "navs"],
       "require": ["jquery"]
     },
     "imgcutter": {
@@ -1029,7 +1029,35 @@
       "name": "Kindeditor",
       "src": {
         "less": ["~/modules/kindeditor.less"],
-        "js": ["assets/kindeditor/kindeditor-all.js"],
+        "js": [
+          "~/kindeditor/kindeditor.js",
+          "~/kindeditor/plugins/lang.js",
+          "~/kindeditor/plugins/anchor.js",
+          "~/kindeditor/plugins/autoheight.js",
+          "~/kindeditor/plugins/baidumap.js",
+          "~/kindeditor/plugins/clearhtml.js",
+          "~/kindeditor/plugins/code.js",
+          "~/kindeditor/plugins/emoticons.js",
+          "~/kindeditor/plugins/filemanager.js",
+          "~/kindeditor/plugins/flash.js",
+          "~/kindeditor/plugins/image.js",
+          "~/kindeditor/plugins/insertfile.js",
+          "~/kindeditor/plugins/lineheight.js",
+          "~/kindeditor/plugins/link.js",
+          "~/kindeditor/plugins/map.js",
+          "~/kindeditor/plugins/media.js",
+          "~/kindeditor/plugins/multiimage.js",
+          "~/kindeditor/plugins/pagebreak.js",
+          "~/kindeditor/plugins/plainpaste.js",
+          "~/kindeditor/plugins/preview.js",
+          "~/kindeditor/plugins/quickformat.js",
+          "~/kindeditor/plugins/template.js",
+          "~/kindeditor/plugins/wordpaste.js",
+          "~/kindeditor/plugins/zui.js",
+          "~/kindeditor/plugins/placeholder.js",
+          "~/kindeditor/plugins/paste-image.js",
+          "~/kindeditor/plugins/advance-table.js"
+        ],
         "resource": ["assets/kindeditor//themes/**/*", "assets/kindeditor//lang/**/*", "assets/kindeditor//plugins.zip", "assets/kindeditor//README.md"]
       },
       "ver": "1.0.0",
@@ -1185,7 +1213,7 @@
         "js": ["src/js/dashboard.js"]
       },
       "ver": "1.0.0",
-      "dpds": ["panels", "grid", "icons"],
+      "dpds": ["grid", "icons"],
       "require": ["jquery"]
     },
     "board": {
@@ -1195,7 +1223,7 @@
         "js": ["src/js/boards.js"]
       },
       "ver": "1.0.0",
-      "dpds": ["jqueryex", "panels", "droppable"],
+      "dpds": ["jqueryex", "droppable"],
       "require": ["jquery"]
     },
     "tabs": {
@@ -1294,6 +1322,14 @@
       },
       "ver": "1.4.0",
       "require": ["icons"]
+    },
+    "flowchart": {
+      "name": "流程图",
+      "src": {
+        "js": ["~/flowchart.js"]
+      },
+      "ver": "1.9.2",
+      "hidden": true
     },
     "clipboard": {
       "name": "clipboard",
@@ -1409,6 +1445,14 @@
         "js": ["src/js/ajax.fake.js"]
       },
       "ver": "1.8.1",
+      "ignoreDpds": false
+    },
+    "guideViewer": {
+      "name": "步骤查看组件",
+      "src": {
+        "js": ["src/js/guide.viewer.js"]
+      },
+      "ver": "1.9.2",
       "ignoreDpds": false
     }
   },

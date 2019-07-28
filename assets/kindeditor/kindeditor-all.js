@@ -6537,7 +6537,9 @@ KindEditor.lang({
         'FangSong_GB2312': '仿宋_GB2312',
         'KaiTi_GB2312': '楷体_GB2312',
         'SimHei': '黑体',
-        'Microsoft YaHei': '微软雅黑',
+        'Source Han Sans': '思源黑体',
+        'Source Han Serif': '思源宋体',
+        'Microsoft YaHei' : '微软雅黑',
         'Arial': 'Arial',
         'Arial Black': 'Arial Black',
         'Times New Roman': 'Times New Roman',
@@ -9988,15 +9990,15 @@ KindEditor.plugin('table', function (K) {
             $table.toggleClass('table-striped', !!setting.stripedRows);
             onUpdateSetting && onUpdateSetting('stripedRows', setting.stripedRows);
         }
-        if (setting.hoverRows !== undefined) {
-            $table.toggleClass('table-hover', !!setting.hoverRows);
-            onUpdateSetting && onUpdateSetting('hoverRows', setting.hoverRows);
-        }
+        // if (setting.hoverRows !== undefined) {
+        //     $table.toggleClass('table-hover', !!setting.hoverRows);
+        //     onUpdateSetting && onUpdateSetting('hoverRows', setting.hoverRows);
+        // }
         if (setting.autoWidth !== undefined) {
             $table.toggleClass('table-auto', !!setting.autoWidth);
             onUpdateSetting && onUpdateSetting('autoWidth', setting.autoWidth);
         }
-        if (setting.borderColor !== undefined) {
+        if  (setting.borderColor !== undefined) {
             $table.find('td,th').css('border', '1px solid ' + setting.borderColor);
             onUpdateSetting && onUpdateSetting('borderColor', setting.borderColor);
         }
@@ -10047,7 +10049,7 @@ KindEditor.plugin('table', function (K) {
                 '<label>{tableStyle}</label>',
                 '<div class="checkbox" style="margin: 0 0 5px"><label><input type="checkbox" name="header"> {addHeaderRow}</label></div>',
                 '<div class="checkbox" style="margin: 0 0 5px"><label><input type="checkbox" name="stripedRows"> {stripedRows}</label></div>',
-                '<div class="checkbox" style="margin: 0 0 5px"><label><input type="checkbox" name="hoverRows"> {hoverRows}</label></div>',
+                // '<div class="checkbox" style="margin: 0 0 5px"><label><input type="checkbox" name="hoverRows"> {hoverRows}</label></div>',
             '</div>',
             '<div class="form-group">',
                 '<label>{autoChangeTableWidth}</label>',

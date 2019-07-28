@@ -34,6 +34,27 @@
 .chosen-container .chosen-drop.chosen-drop-size-limited {
   border-top: 1px solid rgba(0, 0, 0, .15);
   }
+.chosen-container .chosen-drop.chosen-auto-max-width {
+  min-width: 100%;
+  border-top: 1px solid rgba(0, 0, 0, .15);
+  opacity: .5;
+  }
+.chosen-container .chosen-drop.chosen-auto-max-width > .chosen-results > li {
+  display: inline-block;
+  white-space: nowrap;
+  }
+.chosen-container .chosen-drop.chosen-auto-max-width.in {
+  opacity: 1;
+  }
+.chosen-container .chosen-drop.chosen-auto-max-width.in > .chosen-results > li {
+  display: block;
+  white-space: normal;
+  }
+.chosen-container .chosen-drop.chosen-no-wrap > .chosen-results > li {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap!important;
+  }
 .chosen-container.chosen-with-drop .chosen-drop {
   display: block;
   }
@@ -45,9 +66,13 @@
   bottom: 100%;
   margin-top: auto;
   margin-bottom: -1px;
-  border-radius: 2px 2px 0 0;
+  border-radius: 4px 4px 0 0;
   -webkit-box-shadow: 0 -3px 5px rgba(0, 0, 0, .175);
           box-shadow: 0 -3px 5px rgba(0, 0, 0, .175);
+  }
+.chosen-container.chosen-highlight-selected .result-selected {
+  color: #3280fc;
+  background: #ebf2f9;
   }
 .chosen-container-single .chosen-single {
   display: block;
@@ -59,7 +84,6 @@
   color: #222;
   text-decoration: none;
   white-space: nowrap;
-  vertical-align: middle;
   background-color: #fff;
   -webkit-background-clip: padding-box;
           background-clip: padding-box;
@@ -88,7 +112,7 @@
   }
 .chosen-container-single .chosen-single abbr {
   position: absolute;
-  top: 7px;
+  top: 6px;
   right: 24px;
   display: block;
   width: 20px;
@@ -132,6 +156,7 @@
   border-top: 4px solid \9;
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
+  opacity: .5;
   }
 .chosen-container-single .chosen-search {
   position: relative;
@@ -266,12 +291,11 @@
   display: block;
   float: left;
   padding: 0 6px;
-  margin: 5px 0 0 6px;
+  margin: 5px 4px;
   list-style: none;
   }
 .chosen-container-multi .chosen-choices li.search-field {
   padding: 0;
-  margin-bottom: 4px;
   white-space: nowrap;
   }
 .chosen-container-multi .chosen-choices li.search-field input[type="text"] {
@@ -389,8 +413,8 @@
 .chosen-container-active.chosen-with-drop .chosen-single {
   border: 1px solid #cbcbcb;
   border: 1px solid rgba(0, 0, 0, .15);
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0!important;
+  border-bottom-left-radius: 0!important;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
           box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
   }

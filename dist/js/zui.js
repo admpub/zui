@@ -1,5 +1,5 @@
 /*!
- * ZUI: Standard edition - v1.9.0 - 2019-03-04
+ * ZUI: Standard edition - v1.9.1 - 2019-06-03
  * http://zui.sexy
  * GitHub: https://github.com/easysoft/zui.git 
  * Copyright (c) 2019 cnezsoft.com; Licensed MIT
@@ -3175,7 +3175,7 @@
     }
 
     Modal.prototype.hide = function(e) {
-        if(e) e.preventDefault()
+        if(e && e.preventDefault) e.preventDefault()
 
         var that = this;
 
@@ -5843,7 +5843,7 @@
                 if(r === 'transparent') {
                     that.a = 0;
                 } else if(namedColors[r]) {
-                    this.rgb(hexToRgb(namedColors[r]));
+                    that.rgb(hexToRgb(namedColors[r]));
                 } else if(r.indexOf('rgb') === 0) {
                     var rgbsArr = r.substring(r.indexOf('(') + 1, r.lastIndexOf(')')).split(',', 4);
                     that.rgb({
