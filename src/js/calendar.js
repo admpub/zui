@@ -140,7 +140,8 @@
         storage: true,
         withHeader: true,
         dragThenDrop: true, // drag an event and drop at another day,
-        // hideEmptyWeekends: false // Auto hide empty weekends
+        // hideEmptyWeekends: false // Auto hide empty weekends,
+        // hideFirstDayNumber: false // Hide first day number in every month
     };
 
     Calendar.prototype.resetData = function(data) {
@@ -202,19 +203,22 @@
             that.display();
             $e.callComEvent(that, 'clickPrevBtn');
         }).on('click', '.event', function(event) {
+            event.stopPropagation();
+            if ($(event.target).closest('.event-btn').length) {
+                return;
+            }
             $e.callComEvent(that, 'clickEvent', {
                 element: this,
                 event: $(this).data('event'),
                 events: that.events
-            });
-            event.stopPropagation();
-        }).on('click', '.cell-day', function() {
+            }, event);
+        }).on('click', '.cell-day', function(e) {
             $e.callComEvent(that, 'clickCell', {
                 element: this,
                 view: that.view,
                 date: new Date($(this).children('.day').attr('data-date')),
                 events: that.events
-            });
+            }, e);
         });
     };
 
@@ -401,7 +405,8 @@
     };
 
     Calendar.prototype.getLang = function() {
-        this.lang = this.options.langs[(this.options.lang || ($.zui && $.zui.clientLang ? $.zui.clientLang() : 'en')).replace('-', '_')] || this.options.langs.en;
+        this.langName = this.options.lang || $.zui.clientLang();
+        this.lang = $.zui.getLangData(NAME, this.langName, this.options.langs);
     };
 
     Calendar.prototype.display = function(view, date) {
@@ -493,9 +498,7 @@
         }
 
         var $weeks = $view.find('.week-days'),
-            $days = $view.find('.day'),
             firstDayOfMonth = getFirstDayOfMonth(date),
-            // lastDayOfMonth = getLastDayOfMonth(date),
             $week,
             $day,
             $cell,
@@ -527,14 +530,14 @@
                 month = printDate.getMonth();
                 printDateId = printDate.toDateString();
                 $day.attr('data-date', printDateId).data('date', printDate.clone());
-                $day.find('.heading > .number').text(day);
-
+                $day.find('.heading > .number').text(day).toggle(!options.hideFirstDayNumber || day !== 1);
                 $day.find('.heading > .month')
                     .toggle((weekIdx === 0 && dayIndex === 0) || day === 1)
                     .text(((month === 0 && day === 1) ? (lang.year.format(year) + ' ') : '') + lang.monthNames[month]);
                 $cell.toggleClass('current-month', month === thisMonth);
                 $cell.toggleClass('current', (day === todayDate && month === todayMonth && year === todayYear));
                 $cell.toggleClass('past', printDate < today);
+                $cell.toggleClass('first-day', day === 1);
                 $cell.toggleClass('future', printDate > today);
                 $dayEvents = $day.find('.events').empty();
 

@@ -35,9 +35,9 @@ Chosen是用来增强单选列表和多选列表的更佳选择。
         <option value="strawberries">草莓</option>
         <option value="apple">苹果</option>
         <option value="orange">橙子</option>
-        <option value="cherry">樱桃</option>
-        <option value="banana">香蕉</option>
-        <option value="figs">无花果</option>
+        <option value="cherry" selected>樱桃</option>
+        <option value="banana" selected>香蕉</option>
+        <option value="figs" selected>无花果</option>
       </select>
     </div>
   </div>
@@ -208,6 +208,34 @@ $('select.chosen-select').chosen({
 });
 ```
 
+### 记录多选选项选择的顺序
+
+有时需要记录用户选择多选选项时的顺序，可以通过 `[data-sort_field]` 属性（或初始化选项 `sort_field`）指定一个表单域（可以为文本库或隐藏域）来存储选中项值的顺序。
+
+<div class="example">
+  <select data-placeholder="选择一些爱吃的水果..." class="chosen-select form-control" tabindex="2" multiple="" data-sort_field="#chosenSortField" data-sort_value_spliter=",">
+    <option value="strawberries">草莓</option>
+    <option value="apple">苹果</option>
+    <option value="orange">橙子</option>
+    <option value="cherry" selected>樱桃</option>
+    <option value="banana" selected>香蕉</option>
+    <option value="figs" selected>无花果</option>
+  </select>
+  <input type="text" class="form-control" readonly="readonly" value="figs,cherry,banana" id="chosenSortField" style="margin-top: 10px">
+</div>
+
+```html
+<select data-placeholder="选择一些爱吃的水果..." class="chosen-select form-control" tabindex="2" multiple="" data-sort_field="#chosenSortField" data-sort_value_spliter=",">
+  <option value="strawberries">草莓</option>
+  <option value="apple">苹果</option>
+  <option value="orange">橙子</option>
+  <option value="cherry" selected>樱桃</option>
+  <option value="banana" selected>香蕉</option>
+  <option value="figs" selected>无花果</option>
+</select>
+<input type="text" class="form-control" readonly="readonly" value="figs,cherry,banana" id="chosenSortField" style="margin-top: 10px">
+```
+
 ## 用法
 
 ### 引入资源
@@ -262,7 +290,7 @@ Chosen 为独立组件，你需要从本地或 CDN 单独引入 lib 目录下的
           <li><code>'false'</code>（默认）：不禁用</li>
         </ul>
       </td>
-      <td>禁用检索功能，将不再现实搜索框来让用户检索选项。</td>
+      <td>禁用检索功能，将不再显示搜索框来让用户检索选项。</td>
     </tr>
     <tr>
       <td>`disable_search_threshold`</td>
@@ -393,6 +421,18 @@ Chosen 为独立组件，你需要从本地或 CDN 单独引入 lib 目录下的
           <li><code>true</code>，禁用换行</li>
         </ul>
       </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>`sort_field`</td>
+      <td>用于记录多选选项顺序的表单域</td>
+      <td>该选项的值可以为 DOM 元素、jQuery 对象或者 jQuery 对象选择字符串</td>
+      <td>表单域可以隐藏域或者文本框</td>
+    </tr>
+    <tr>
+      <td>`sort_value_splitter`</td>
+      <td>用于记录多选选项值顺序时用于拼接的字符</td>
+      <td>默认为 `','`</td>
       <td></td>
     </tr>
   </tbody>
@@ -533,6 +573,8 @@ function afterPageLoad() {
                 search_contains: true,
                 width: '100%'
             }, $(this).data()));
+        }).on('change', function(e, data){
+            console.log('change', e, data);
         });
     }
     if($.fn.chosenIcons) $('#chosenIcons').chosenIcons();

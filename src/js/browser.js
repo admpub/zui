@@ -10,20 +10,18 @@
     'use strict';
 
     var browseHappyTip = {
-        'zh_cn': '您的浏览器版本过低，无法体验所有功能，建议升级或者更换浏览器。 <a href="http://browsehappy.com/" target="_blank" class="alert-link">了解更多...</a>',
-        'zh_tw': '您的瀏覽器版本過低，無法體驗所有功能，建議升級或者更换瀏覽器。<a href="http://browsehappy.com/" target="_blank" class="alert-link">了解更多...</a>',
-        'en': 'Your browser is too old, it has been unable to experience the colorful internet. We strongly recommend that you upgrade a better one. <a href="http://browsehappy.com/" target="_blank" class="alert-link">Learn more...</a>'
+        'zh_cn': '您的浏览器版本过低，无法体验所有功能，建议升级或者更换浏览器。 <a href="https://browsehappy.com/" target="_blank" class="alert-link">了解更多...</a>',
+        'zh_tw': '您的瀏覽器版本過低，無法體驗所有功能，建議升級或者更换瀏覽器。<a href="https://browsehappy.com/" target="_blank" class="alert-link">了解更多...</a>',
+        'en': 'Your browser is too old, it has been unable to experience the colorful internet. We strongly recommend that you upgrade a better one. <a href="https://browsehappy.com/" target="_blank" class="alert-link">Learn more...</a>'
     };
 
     // The browser modal class
     var Browser = function () {
-        var ie = this.isIE() || this.isIE10() || false;
-        if (ie) {
-            for (var i = 10; i > 5; i--) {
-                if (this.isIE(i)) {
-                    ie = i;
-                    break;
-                }
+        var ie = false;
+        for (var i = 11; i > 5; i--) {
+            if (this.isIE(i)) {
+                ie = i;
+                break;
             }
         }
 
@@ -45,24 +43,33 @@
                 .toggleClass('gt-ie-8 gte-ie-9', ie >= 9)
                 .toggleClass('lte-ie-8 lt-ie-9', ie < 9)
                 .toggleClass('gt-ie-9 gte-ie-10', ie >= 10)
-                .toggleClass('lte-ie-9 lt-ie-10', ie < 10);
+                .toggleClass('lte-ie-9 lt-ie-10', ie < 10)
+                .toggleClass('gt-ie-10 gte-ie-11', ie >= 11)
+                .toggleClass('lte-ie-10 lt-ie-11', ie < 11);
         }
     };
 
     // Show browse happy tip
-    Browser.prototype.tip = function (showCoontent) {
+    Browser.prototype.tip = function (showContent) {
         var $browseHappy = $('#browseHappyTip');
         if (!$browseHappy.length) {
             $browseHappy = $('<div id="browseHappyTip" class="alert alert-dismissable alert-danger-inverse alert-block" style="position: relative; z-index: 99999"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><div class="container"><div class="content text-center"></div></div></div>');
             $browseHappy.prependTo('body');
         }
-
-        $browseHappy.find('.content').html(showCoontent || this.browseHappyTip || browseHappyTip[$.zui.clientLang() || 'en'] || browseHappyTip.en);
+        if (!showContent) {
+            showContent = $.zui.getLangData('zui.browser', $.zui.clientLang(), browseHappyTip);
+            if (typeof showContent === 'object') {
+                showContent = showContent.tip;
+            }
+        }
+        $browseHappy.find('.content').html(showContent);
     };
 
     // Detect it is IE, can given a version
     Browser.prototype.isIE = function (version) {
+        if (version === 11) return this.isIE11();
         if (version === 10) return this.isIE10();
+        if (!version && (this.isIE11() || this.isIE10())) return true;
         var b = document.createElement('b');
         b.innerHTML = '<!--[if IE ' + (version || '') + ']><i></i><![endif]-->';
         return b.getElementsByTagName('i').length === 1;
@@ -70,7 +77,13 @@
 
     // Detect ie 10 with hack
     Browser.prototype.isIE10 = function () {
-        return (/*@cc_on!@*/false);
+        return navigator.appVersion.indexOf("MSIE 10") !== -1;
+    };
+
+    // Detect ie 10 with hack
+    Browser.prototype.isIE11 = function () {
+        var userAgentStr = navigator.userAgent;
+        return userAgentStr.indexOf("Trident") !== -1 && userAgentStr.indexOf("rv:11") !== -1;
     };
 
     $.zui({

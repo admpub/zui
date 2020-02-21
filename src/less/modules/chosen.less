@@ -26,12 +26,11 @@
 // @group Base //
 .chosen-container {
   position: relative;
-  display: inline-block;
-  vertical-align: middle;
+  display: block;
   font-size: @font-size-base;
   zoom: 1;
-  *display: inline;
   user-select: none;
+  vertical-align: middle;
   .chosen-drop {
     position: absolute;
     top: 100%;
@@ -136,19 +135,21 @@
   }
   .chosen-single abbr {
     position: absolute;
-    top: (@input-height-base - 20px)/2;
+    top: (@input-height-base - 20px)/2 - 1px;
     right: 24px;
     display: block;
     width: 20px;
     height: 20px;
-    line-height: 14px;
-    font-size: (@font-size-base * 1.5);
+    line-height: 18px;
+    font-size: 18px;
     font-weight: @close-font-weight;
     color: @close-color;
     text-shadow: @close-text-shadow;
     text-align: center;
+    font-family: sans-serif;
     .opacity(.2);
     &:before {
+      display: block;;
       content: '×';
     }
     &:hover,
@@ -476,4 +477,11 @@
     display: block;
     opacity: 1;
   }
+}
+
+// Fix multiple select height change during chosen load
+select.chosen[multiple] {
+  height: @input-height-base;
+  overflow: hidden;
+  option {visibility: hidden;}
 }

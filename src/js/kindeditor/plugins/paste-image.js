@@ -39,7 +39,8 @@ KindEditor.plugin('pasteimage', function(K) {
         if (typeof options === 'string') {
             options = {postUrl: options};
         }
-        var lang = $.extend({}, allLangs.en, allLangs[($.clientLang || $.zui.clientLang)()], options.lang);
+        var langName = $.clientLang ? $.clientLang() : ($.zui && $.zui.clientLang) ? $.zui.clientLang() : 'en';
+        var lang = $.extend({}, ($.zui && $.zui.getLangData) ? $.zui.getLangData('kindeditor.advanceTable', langName, allLangs) : $.extend({}, allLangs.en, self.lang('table.'), allLangs[langName]), options.lang);
 
         if(!K.WEBKIT && !K.GECKO)
         {
@@ -70,8 +71,11 @@ KindEditor.plugin('pasteimage', function(K) {
                 options.beforePaste();
             }
             var imageLoadingEle = '<div class="image-loading-ele small" style="padding: 5px; background: #FFF3E0; width: 300px; border-radius: 2px; border: 1px solid #FF9800; color: #ff5d5d; margin: 10px 0;"><i class="icon icon-spin icon-spinner-indicator muted"></i> ' + lang.uploadingHint + '</div>';
-            edit.cmd.inserthtml(imageLoadingEle);
             self.readonly(true);
+            if ($.fn.enableForm) {
+                $(self.edit.div[0]).closest('form').enableForm(false);
+            }
+            self.cmd.inserthtml(imageLoadingEle);
         };
 
         var pasteEnd = function(error) {
@@ -92,8 +96,14 @@ KindEditor.plugin('pasteimage', function(K) {
             if (options.afterPaste) {
                 options.afterPaste();
             }
-            $(doc.body).find('.image-loading-ele').remove();
+
+            // Use self.undo to remove .image-loading-ele now
+            // $(doc.body).find('.image-loading-ele').remove();
+
             self.readonly(false);
+            if ($.fn.enableForm) {
+                $(self.edit.div[0]).closest('form').enableForm(true);
+            }
         };
 
         var pasteUrl = options.postUrl;
@@ -130,10 +140,13 @@ KindEditor.plugin('pasteimage', function(K) {
                     var html = '<img src="' + result + '" alt="" />';
                     $.post(pasteUrl, {editor: html}, function(data)
                     {
+                        self.undo();
+                        self._redoStack.pop();
                         if (data) {
-                            edit.cmd.inserthtml(data);
+                            var $img = $(data);
+                            edit.cmd.insertimage($img.attr('src'), $img.attr('title'), $img.attr('width'), $img.attr('height'));
                         } else {
-                            edit.cmd.inserthtml(html);
+                            edit.cmd.insertimage(result);
                         }
                         pasteEnd();
                     }).error(function()
@@ -150,6 +163,8 @@ KindEditor.plugin('pasteimage', function(K) {
                         pasteBegin();
                         $.post(pasteUrl, {editor: html}, function(data) {
                             if(data.indexOf('<img') === 0) data = '<p>' + data + '</p>';
+                            self.undo();
+                            self._redoStack.pop();
                             edit.html(data);
                             pasteEnd();
                         }).error(function()

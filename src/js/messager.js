@@ -12,26 +12,36 @@
     var id = 0;
     var template = '<div class="messager messager-{type} {placement}" style="display: none"><div class="messager-content"></div><div class="messager-actions"></div></div>';
     var DEFAULTS = {
+        icons: {},
         type: 'default',
         placement: 'top',
         time: 4000,
         parent: 'body',
         // clear: false,
-        icon: null,
+        // icon: null,
         close: true,
         // actions: [{icon, name, action, title}],
         // contentClass: null,
         // cssClass: null,
         // onAction: function,
         fade: true,
-        scale: true
+        scale: true,
+        // notification: false,
+        // html: false,
+        // content: '',
+        // title: '',
     };
     var all = {};
 
     var Messager = function(message, options) {
-        if($.isPlainObject(message)) {
-            options = message;
-            message = options.message;
+        if ($.isPlainObject(message)) {
+            options = $.extend({}, options, message);
+        } else if (message) {
+            if (options) {
+                options.content = message;
+            } else {
+                options = {content: message};
+            }
         }
 
         var that = this;
@@ -41,7 +51,6 @@
         var oldMessager = all[that.id];
         if(oldMessager) oldMessager.destroy();
         all[that.id] = that;
-        that.message = (options.icon ? '<i class="icon-' + options.icon + ' icon"></i> ' : '') + message;
 
         that.$ = $(template.format(options)).toggleClass('fade', options.fade).toggleClass('scale', options.scale).attr('id', 'messager-' + that.id);
 
@@ -99,9 +108,6 @@
             }
         });
 
-        var $content = that.$.find('.messager-content').html(that.message);
-        if(options.contentClass) $content.addClass(options.contentClass);
-
         that.$.data('zui.messager', that);
 
         if(options.show && that.message !== undefined) {
@@ -109,18 +115,58 @@
         }
     };
 
-    Messager.prototype.update = function(message, newOptions) {
+    Messager.prototype.update = function(content, newOptions) {
+        if ($.isPlainObject(content)) {
+            newOptions = content;
+        } else if (content) {
+            if (newOptions) {
+                newOptions.content = content;
+            } else {
+                newOptions = {content: content};
+            }
+        }
         var that = this;
         var options = that.options;
         that.$.removeClass('messager-' + options.type);
+        var $content = that.$.find('.messager-content');
+        if (options.contentClass) {
+            $content.removeClass(options.contentClass);
+        }
         if(newOptions) {
             options = $.extend(options, newOptions);
         }
-        that.$.addClass('messager-' + options.type);
-        if(message) {
-            that.message = (options.icon ? '<i class="icon-' + options.icon + ' icon"></i> ' : '') + message;
-            that.$.find('.messager-content').html(that.message);
+        that.$.addClass('messager-' + options.type).toggleClass('messager-notification', !!options.notification);
+        if(options.contentClass) $content.addClass(options.contentClass);
+        var title = options.title;
+        var icon = options.icon;
+        content = options.content;
+        $content.empty();
+        if (title) {
+            var $title = $('<div class="messager-title"></div>');
+            $title[options.html ? 'html' : 'text'](title);
+            $content.append($title);
         }
+        if (content) {
+            var $text = $('<div class="messager-text"></div>');
+            $text[options.html ? 'html' : 'text'](content);
+            $content.append($text);
+        }
+        var $icon = that.$.find('.messager-icon');
+        if (icon) {
+            var iconHtml = $.isPlainObject(icon) ? icon.html : '<i class="icon-' + icon + ' icon"></i>';
+            if ($icon.length) {
+                $icon.html(iconHtml);
+            } else {
+                $content.before('<div class="messager-icon">' + iconHtml + '<div>');
+            }
+        } else {
+            $icon.remove();
+        }
+        that.$.toggleClass('messager-has-icon', !!icon);
+        if (!that.updateTime) {
+            options.onUpdate && options.onUpdate.call(that, options);
+        }
+        that.updateTime = Date.now();
     };
 
     Messager.prototype.show = function(message, callback) {
@@ -171,6 +217,7 @@
 
         that.isShow = true;
         callback && callback();
+        options.onShow && options.onShow.call(that, options);
         return that;
     };
 
@@ -180,6 +227,7 @@
             callback = null;
         }
         var that = this;
+        var options = that.options;
         if(that.$.hasClass('in')) {
             that.$.removeClass('in');
             var removeMessager = function() {
@@ -187,11 +235,13 @@
                 that.$.detach();
                 if(!$parent.children().length) $parent.remove();
                 callback && callback(true);
+                options.onHide && options.onHide.call(that, immediately);
             };
             if(immediately) removeMessager();
             else setTimeout(removeMessager, 200);
         } else {
             callback && callback(false);
+            options.onHide && options.onHide.call(that, immediately);
         }
 
         that.isShow = false;
@@ -207,27 +257,62 @@
         delete all[that.id];
     };
 
-    Messager.all = all;
-    Messager.DEFAULTS = DEFAULTS;
-
-    var hideMessage = function() {
-        $('.messager').each(function() {
-            var msg = $(this).data('zui.messager');
-            if(msg && msg.hide) msg.hide(true);
-        });
+    var hideMessager = function(id) {
+        if (id === undefined) {
+            $('.messager').each(function() {
+                var msg = $(this).data('zui.messager');
+                if(msg && msg.hide) msg.hide(true);
+            });
+        } else {
+            var msg = $('#messager-' + id).data('zui.messager');
+            if(msg && msg.hide) msg.hide();
+        }
     };
 
-    var showMessage = function(message, options) {
+    var showMessager = function(message, options) {
         if(typeof options === 'string') {
             options = {
                 type: options
             };
         }
+        if ($.isPlainObject(message)) {
+            options = $.extend({}, options, message);
+            message = null;
+        }
         options = $.extend({}, options);
-        if(options.id === undefined) hideMessage();
+        if(options.id === undefined) hideMessager();
         var msg = all[options.id] || new Messager(message, options);
         msg.show();
         return msg;
+    };
+
+    var NOTIFICATION_DEFAULTS = {
+        notification: true,
+        placement: 'bottom-right',
+        time: 0,
+        icon: 'bell icon-2x',
+    };
+    var showNotification = function(title, message, options) {
+        var defaultOptions = $.extend({id: $.zui.uuid()}, NOTIFICATION_DEFAULTS);
+        var isTitleString = typeof title === 'string';
+        var isMessageString = typeof message === 'string'
+        if (isTitleString && isMessageString) {
+            options = $.extend(defaultOptions, options, {
+                title: title,
+                content: message
+            });
+        } else if (isTitleString && $.isPlainObject(message)) {
+            options = $.extend(defaultOptions, options, message, {
+                title: title
+            });
+        } else if ($.isPlainObject(title)) {
+            options = $.extend(defaultOptions, options, message, title);
+        } else if (isTitleString) {
+            options = $.extend(defaultOptions, options, {
+                title: title
+            });
+        }
+        return showMessager(options);
     };
 
     var getOptions = function(options) {
@@ -237,9 +322,13 @@
     };
 
     var zuiMessager = {
-        show: showMessage,
-        hide: hideMessage
+        show: showMessager,
+        hide: hideMessager
     };
+
+    Messager.all = all;
+    Messager.DEFAULTS = DEFAULTS;
+    Messager.NOTIFICATION_DEFAULTS = NOTIFICATION_DEFAULTS;
 
     $.each({
         primary  : 0,
@@ -251,17 +340,17 @@
         special  : 0
     }, function(name, icon){
         zuiMessager[name] = function(message, options) {
-            return showMessage(message, $.extend({
+            return showMessager(message, $.extend({
                 type: name,
-                icon: icon || null
+                icon: Messager.DEFAULTS.icons[name] || icon || null
             }, getOptions(options)));
         };
     });
 
     $.zui({
         Messager: Messager,
-        showMessager: showMessage,
+        showMessager: showMessager,
+        showNotification: showNotification,
         messager: zuiMessager
     });
 }(jQuery, window, undefined));
-

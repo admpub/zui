@@ -55,14 +55,14 @@
 
 ```js
 // 手动初始化时，也可以使用数组来定于预设颜色
-$('.input-group #myColor').colorpicker({
+$('.input-group #myColor').colorPicker({
     colors: ['#fff', '#000', '#3280fC', 'red']
 });
 ```
 
 ## 自定义按钮图标
 
-使用 `icon` 选项来自定义预设的颜色。可供使用的图标参见 [控件 - 图标](#control/icon) 章节。
+使用 `icon` 选项来自定义预设的图标。可供使用的图标参见 [控件 - 图标](#control/icon) 章节。
 
 <example>
   <div class="row">
@@ -118,7 +118,7 @@ $('.input-group #myColor').colorpicker({
 使用 JavaScript 代码手动初始化，允许在调用初始化函数的同时传入初始化选项。
 
 ```js
-$('.input-group #myColor').colorpicker({
+$('.input-group #myColor').colorPicker({
     wrapper: '.input-group-btn'
 });
 ```
@@ -161,7 +161,7 @@ $(function() {
       <td>`wrapper`</td>
       <td>下拉按钮父元素的 CSS CLASS</td>
       <td>默认为 `'btn-wrapper'`</td>
-      <td>当使用输入组形式时，应该讲此选项设置为 `'input-group-btn'`</td>
+      <td>当使用输入组形式时，应该将此选项设置为 `'input-group-btn'`</td>
     </tr>
     <tr>
       <td>`tileSize`</td>

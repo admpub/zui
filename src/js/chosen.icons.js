@@ -9,11 +9,13 @@
 + function($) {
     'use strict';
 
+    var NAME = 'zui.chosenIcons';
+
     var ChosenIcons = function(element, options) {
         this.$ = $(element);
         this.options = this.getOptions(options);
         this.lang = ChosenIcons.LANGS[this.options.lang] || ChosenIcons.LANGS.en;
-        this.id = 'chosen-icons-' + parseInt(Math.random() * 10000000000 + 1);
+        this.id = 'chosen-icons-' + $.zui.uuid();
 
         this.init();
     };
@@ -139,10 +141,10 @@
     $.fn.chosenIcons = function(option) {
         return this.each(function() {
             var $this = $(this);
-            var data = $this.data('zui.chosenIcons');
+            var data = $this.data(NAME);
             var options = typeof option == 'object' && option;
 
-            if(!data) $this.data('zui.chosenIcons', (data = new ChosenIcons(this, options)));
+            if(!data) $this.data(NAME, (data = new ChosenIcons(this, options)));
 
             if(typeof option == 'string') data[option]();
         })

@@ -68,21 +68,21 @@ $('#datagridExample').datagrid({
 * `name`: 列上要显示的数据属性名称；
 * `label`: 可选，列标题文本，如果不定义此属性则使用 `name` 属性作为标题文本；
 * `html`: 默认为 `false`，如果设置为 `true`，则在渲染列时将内容作为 html 源码更新到页面上；
-* `style`: 可选，在该列上所以单元格元素上要添加的样式（使用 jQuery CSS 样式定义对象规则）；
+* `style`: 可选，在该列上所有单元格元素上要添加的样式（使用 jQuery CSS 样式定义对象规则）；
 * `width`: 列宽度，如果设置为小于 `1` 的浮点数，则将此值用于自适应时计算最终宽度的权值；
 * `minWidth`：列最小宽度，当启用自适应时，最终计算的宽度不会小于该值；
 * `className`: 可选，在该列上所有单元格元素上要添加的类名；
 * `checkbox`: 默认为 `false`，如果设置为 `true`，则在此列单元格内显示勾选框；
 * `valueType`：该列值类型，默认 `string`；
 * `valueOperator`: 可选，该列上的值转换器；
-* `sort`：是否为当前列开启排序功能，默认为 `true`，如果设置为 `false`，即便 `sortable` 选项设置为 `true` 也无法使用该列进行排序；
+* `sort`：是否为当前列开启排序功能，默认为 `true`，如果设置为 `false`，即便初始化选项 `sortable` 设置为 `true` 也无法使用该列进行排序；
 * `sortFunc`：可选，当使用该列排序时的比较函数。
 
 ```js
 $('#myDataGrid').datagrid({
     dataSource: {
         cols:[
-            {name: 'time', label: '时间', width: 132},
+            {name: 'time', label: '对局时间', width: 132},
             {name: 'hero', label: '英雄', width: 134},
             {name: 'action', label: '动作', width: 109},
             {name: 'target', label: '目标', width: 109},
@@ -102,8 +102,8 @@ $('#myDataGrid').datagrid({
 $('#myDataGrid').datagrid({
     dataSource: {
         cols:[
-            {name: 'time', label: '时间', width: 132},
-            {name: 'hera', label: '英雄', width: 134},
+            {name: 'time', label: '对局时间', width: 132},
+            {name: 'hero', label: '英雄', width: 134},
             {name: 'action', label: '动作', width: 109},
             {name: 'target', label: '目标', width: 109},
             {name: 'desc', label: '描述', width: 287}
@@ -186,8 +186,8 @@ $('#myDataGrid').datagrid({
 $('#remoteDataGridExample').datagrid({
     dataSource: {
         cols:[
-            {name: 'time', label: '时间', width: 132},
-            {name: 'hera', label: '英雄', width: 134},
+            {name: 'time', label: '对局时间', width: 132},
+            {name: 'hero', label: '英雄', width: 134},
             {name: 'action', label: '动作', width: 109},
             {name: 'target', label: '目标', width: 109},
             {name: 'desc', label: '描述', width: 287}
@@ -673,18 +673,18 @@ $('#datagridSpanExample').datagrid({
 
 值转换器可以通过如下途径进行设置，不同途径生效范围不同。
 
-通过 `valueOperator` 选项进行设置，会影响特定类型的数据，例如下例将所有事件戳类型转换为中文日期格式：
+通过 `valueOperator` 选项进行设置，会影响特定类型的数据，例如下例将所有时间戳类型转换为中文日期格式：
 
 ```js
 $('#myDataGrid').datagrid({
     dataSource: {
         cols: [
-            {name: 'time', valueType: 'date', label: '时间'},
+            {name: 'time', valueType: 'date', label: '对局时间'},
             // ... 其他列定义
         ]
     },
     valueOperator: {
-        // date 值转换器会影响所以 valueType 为 `date` 的列
+        // date 值转换器会影响所有 valueType 为 `date` 的列
         date: {
             getter: function(dataValue, cell, dataGrid) {
                 return new Date(dataValue).toLocaleString();
@@ -696,7 +696,7 @@ $('#myDataGrid').datagrid({
 
 <div class="alert alert-primary">
   <h4>内置的日期值转换器</h4>
-  <p>数据表格已经内置了对日期类型（`valueType` 为 `date`）的转换支持，可以简单的通过 `defaultDateFormater` 来设置转换的日期格式。</p>
+  <p>数据表格已经内置了对日期类型（`valueType` 为 `date`）的转换支持，可以简单的通过 `defaultDateFormatter` 来设置转换的日期格式。</p>
 </div>
 
 值转换器还可以通过列定义参数进行设置。上例可以写为：
@@ -707,7 +707,7 @@ $('#myDataGrid').datagrid({
         cols: [
             {
                 name: 'time',
-                label: '时间',
+                label: '对局时间',
                 // 值转换器仅仅影响当前列
                 valueOperator: {
                     getter: function(dataValue, cell, dataGrid) {
@@ -721,13 +721,13 @@ $('#myDataGrid').datagrid({
 });
 ```
 
-值转换器还可以通过 `configs` 选项单独为某个单元格或某行进行设置。例如仅仅为第 2 行第 1 列应用日期值转换器“
+值转换器还可以通过 `configs` 选项单独为某个单元格或某行进行设置。例如仅仅为第 2 行第 1 列应用日期值转换器：
 
 ```js
 $('#myDataGrid').datagrid({
     dataSource: {
         cols: [
-            {name: 'time', valueType: 'date', label: '时间'},
+            {name: 'time', valueType: 'date', label: '对局时间'},
             // ... 其他列定义
         ]
     },
@@ -747,7 +747,7 @@ $('#myDataGrid').datagrid({
 
 ## 自适应列宽
 
-默认情况下列宽如果没有指定的话会自动进行调整，在保证最小列宽的情况下自动根据调整其他列的宽度，确保所以列宽能够填满水平空间，如果水平空间不够显示所以列，则会允许用户在水平方向上滚动浏览其他列。如果不需要自适应列宽功能可以将 `responsive` 选项设置为 `false`，并且在列定义中为每一列手动设置宽度。
+默认情况下列宽如果没有指定的话会自动进行调整，在保证最小列宽的情况下自动根据调整其他列的宽度，确保所有列宽能够填满水平空间，如果水平空间不够显示所有列，则会允许用户在水平方向上滚动浏览其他列。如果不需要自适应列宽功能可以将 `responsive` 选项设置为 `false`，并且在列定义中为每一列手动设置宽度。
 
 当启用自适应列宽功能时，所有没有指定宽度的列会平分剩余的水平空间，但仍然可以通过配置为列宽设置一个权值，使得拥有更大权值的列获得更多的空间。权值通过 列定义的 `width` 属性设置，必须小于 `1`。
 
@@ -755,8 +755,8 @@ $('#myDataGrid').datagrid({
 $('#myDataGrid').datagrid({
     dataSource: {
         cols:[
-            {name: 'time', label: '时间', width: 132},
-            {name: 'hera', label: '英雄', width: 134},
+            {name: 'time', label: '对局时间', width: 132},
+            {name: 'hero', label: '英雄', width: 134},
             {name: 'action', label: '动作', width: 109},
 
             // target 列自适应，占据剩余列宽的 1/4
@@ -1003,7 +1003,7 @@ $('#myDataGrid').datagrid({
       <td>参见上文"值转换器"内容。</td>
     </tr>
     <tr>
-      <td><code>defaultDateFormater</code></td>
+      <td><code>defaultDateFormatter</code></td>
       <td>默认日期转换格式</td>
       <td>默认为 `yyyy-MM-dd hh:mm`</td>
       <td>参见上文"值转换器"内容。</td>
@@ -1075,7 +1075,7 @@ $('#myDataGrid').datagrid({
       </td>
     </tr>
     <tr>
-      <td><code>cellFormator</code></td>
+      <td><code>cellFormatter</code></td>
       <td>单元格格式化函数</td>
       <td>默认为 `null`</td>
       <td>
@@ -1352,7 +1352,7 @@ $('#dataGrid').datagrid({
 
 ```js
 // 使用 jquery 的 $().on() 方法监听事件
-$('#dataGrid').on('onRender', function(event) {
+$('#dataGrid').on('onRender', function() {
     // 表格已重新渲染
 });
 ```
@@ -1426,10 +1426,34 @@ $('#dataGrid').datagrid({
 
 ```js
 // 使用 jquery 的 $().on() 方法监听事件
-$('#dataGrid').on('onLoad', function(event, result) {
+$('#dataGrid').on('onSelectRow', function(event, result) {
     if (result === false) {
         console.log('数据加载失败。');
     }
+});
+```
+
+### `onClickCell`
+
+当用户点击单元格时触发，其中回调函数参数包括：
+
+* `event`：鼠标点击事件对象；
+* `cell`：单元格数据对象；
+* `$cell`：单元格 DOM 元素。
+
+```js
+// 在初始化的时候设置事件回调函数
+$('#dataGrid').datagrid({
+    onClickCell: function(event, cell, $cell) {
+        console.log('点击了单元格第', cell.rowIndex, '行', cell.colIndex, '列');
+    }
+});
+```
+
+```js
+// 使用 jquery 的 $().on() 方法监听事件
+$('#dataGrid').on('onClickCell', function(event, cell, $cell) {
+    console.log('点击了单元格第', cell.rowIndex, '行', cell.colIndex, '列');
 });
 ```
 
@@ -1471,7 +1495,7 @@ function afterPageLoad() {
             var items = ['圣剑', '虚灵之刃', '真视宝石', '恐鳌之心', '远行鞋', '治疗指环', '黑皇杖', '刷新球', '金箍棒', '蝴蝶', '诡计之雾', '显影之尘', '侦查守卫', '岗哨守卫', '漩涡', '天堂之戟', '刃甲', '希瓦的守护', '强袭胸甲', '阿托斯之棍', '银月之晶', '斯嘉蒂之眼', '玲珑心', '撒旦之邪力', '否决挂饰', '隐刀', '血棘', '邪恶镰刀', '白银之锋', '辉耀', '代达罗斯之殇', '幻影斧', '林肯法球', '阿哈利姆神杖', '死灵书'];
             var runes = ['赏金神符', '双倍神符', '魔法神符', '极速神符', '不朽之守护', '奶酪'];
             var cols = [
-                {label: '时间', name: 'time', width: 130, valueType: 'gametime', sort: true},
+                {label: '对局时间', name: 'time', width: 130, valueType: 'gametime', sort: true},
                 {label: '英雄', name: 'hero', width: 80},
                 {label: '动作', name: 'action', width: 80},
                 {label: '队友', name: 'teammate', width: 80},
@@ -1618,7 +1642,10 @@ function afterPageLoad() {
         sortable: true,
         hoverCell: true,
         onSelectRow: function(rowIndex, checked, selections) {
-          console.log('>', rowIndex, checked, selections);
+          console.log('DataGrid Demo: 行', rowIndex, checked ? '选中了' : '取消选中了', selections);
+        },
+        onClickCell: function(event, cell, $cell) {
+          console.log('DataGrid Demo: 点击了单元格第', cell.rowIndex, '行', cell.colIndex, '列', cell, event, $cell);
         }
     });
     var simpleDataSource = {
@@ -1636,8 +1663,8 @@ function afterPageLoad() {
         dataSource: {
             cache: false,
             cols:[
-                {name: 'time', label: '时间', width: 132},
-                {name: 'hera', label: '英雄', width: 134},
+                {name: 'time', label: '对局时间', width: 132},
+                {name: 'hero', label: '英雄', width: 134},
                 {name: 'action', label: '动作', width: 109},
                 {name: 'target', label: '目标', width: 109},
                 {name: 'desc', label: '描述', width: 287}
@@ -1655,7 +1682,7 @@ function afterPageLoad() {
         },
     });
     $('#dynamicDataGridExample').datagrid($.extend({
-        defaultDateFormater: 'hh:mm:ss',
+        defaultDateFormatter: 'hh:mm:ss',
         states: {
             fixedTopUntil: 0,
             fixedBottomFrom: sampleData.dataSource.length,
@@ -1740,7 +1767,7 @@ function afterPageLoad() {
             pager: {page: 1, recPerPage: 20},
         },
         valueOperator: {
-            // date 值转换器会影响所以 valueType 为 `date` 的列
+            // date 值转换器会影响所有 valueType 为 `date` 的列
             gametime: {
                 getter: function(dataValue, cell, dataGrid) {
                     return '第' + (Math.floor(dataValue%60)) + '分钟第' + (dataValue%60) + '秒';

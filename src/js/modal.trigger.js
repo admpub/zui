@@ -47,6 +47,8 @@
         waittime: 0,
         loadingIcon: 'icon-spinner-indicator',
         scrollInside: false,
+        // handleLinkInIframe: false,
+        // iframeStyle: ''
         // headerHeight: 'auto',
     };
 
@@ -113,7 +115,7 @@
 
     ModalTrigger.prototype.show = function(option) {
         var that = this;
-        var options = $.extend({}, that.options, {
+        var options = $.extend({}, ModalTrigger.DEFAULTS, that.options, {
             url: that.$trigger ? (that.$trigger.attr('href') || that.$trigger.attr('data-url') || that.$trigger.data('url')) : that.options.url
         }, option);
         var isShown = that.isShown;
@@ -167,13 +169,14 @@
                     if(options.type === 'iframe') $body.css('height', $dialog.height() - $header.outerHeight());
                 }
                 that.ajustPosition(options.position);
-                $modal.removeClass('modal-loading');
+                $modal.removeClass('modal-loading').removeClass('modal-updating');
                 if(isShown) {
                     $body.removeClass('loading');
                 }
 
                 if(options.type != 'iframe') {
-                    $dialog.off('resize.' + NAME).on('resize.' + NAME, resizeDialog);
+                    $body = $dialog.off('resize.' + NAME).find('.modal-body').off('resize.' + NAME);
+                    ($body.length ? $body : $dialog).on('resize.' + NAME, resizeDialog);
                 }
 
                 callback && callback();
@@ -202,10 +205,10 @@
         } else if(options.url) {
             var onLoadBroken = function() {
                 var brokenContent = $modal.callComEvent(that, 'broken');
-                if(brokenContent) {
+                if(typeof brokenContent === 'string') {
                     $body.html(brokenContent);
-                    readyToShow();
                 }
+                readyToShow();
             };
 
             $modal.attr('ref', options.url);
@@ -224,7 +227,7 @@
                 }
 
                 var frame = document.getElementById(iframeName);
-                frame.onload = frame.onreadystatechange = function() {
+                frame.onload = frame.onreadystatechange = function(e) {
                     var scrollInside = !!options.scrollInside;
                     if(that.firstLoad) $modal.addClass('modal-loading');
                     if(this.readyState && this.readyState != 'complete') return;
@@ -249,8 +252,7 @@
                                     height = Math.max(height, $body.data('minModalHeight') || 0);
                                     $body.data('minModalHeight', height);
                                 }
-                                if (scrollInside)
-                                {
+                                if (scrollInside) {
                                     var headerHeight = options.headerHeight;
                                     if (typeof headerHeight !== 'number') {
                                         headerHeight = $header.height();
@@ -286,6 +288,18 @@
                             }
                         } else {
                             readyToShow();
+                        }
+
+                        var handleLinkInIframe = options.handleLinkInIframe;
+                        if (handleLinkInIframe) {
+                            frame$('body').on('click', typeof handleLinkInIframe === 'string' ? handleLinkInIframe : 'a[href]', function() {
+                                if ($(this).is('[data-toggle="modal"]')) return;
+                                $modal.addClass('modal-updating');
+                            });
+                        }
+
+                        if (options.iframeStyle) {
+                            frame$('head').append('<style>' + options.iframeStyle + '</style>');
                         }
                     } catch(e) {
                         readyToShow();
@@ -401,6 +415,9 @@
     var getModal = function(modal) {
         if (!modal) {
             modal = $('.modal.modal-trigger');
+            if (!modal.length) {
+
+            }
         } else {
             modal = $(modal);
         }

@@ -22,6 +22,7 @@ var extend = require('extend'),
     jsonminify = require('gulp-jsonminify'),
     zui = require('./zui.json'),
     pkg = require('./package.json'),
+    babel = require('gulp-babel'),
     showFileDetail = true;
 
 // Disable the 'possible EventEmitter memory leak detected' warning.
@@ -58,9 +59,21 @@ try {
 
 // try load zui.custom.json and merge into zui.
 try {
-    var zuicustom = require('./zui.custom.json');
-    if (zuicustom) extend(true, zui, zuicustom);
+    var zuiCustom = require('./zui.custom.json');
+    if (zuiCustom) extend(true, zui, zuiCustom);
 } catch (e) { }
+
+// try load specific config from file by process argument
+const configFileArg = process.argv[4];
+if (configFileArg && configFileArg.startsWith('--config=')) {
+    let configFile = configFileArg.substring('--config='.length);
+    if (configFile) {
+        try {
+            const zuiCustom = require(configFile.replace('~t/', './templates/'));
+            if (zuiCustom) extend(true, zui, zuiCustom);
+        } catch (e) { }
+    }
+}
 
 var today = moment();
 var typeSet = ['less', 'js', 'resource'],
@@ -264,7 +277,8 @@ function buildBundle(name, callback, type) {
                     source: buildLib.source,
                     settingDpds: (buildLib.src && buildLib.src.less && buildLib.src.less.length) ? ['setting'] : null,
                     ignoreBasic: true,
-                    ignoreDpds: buildLib.ignoreDpds !== undefined ? buildLib.ignoreDpds : true
+                    ignoreDpds: buildLib.ignoreDpds !== undefined ? buildLib.ignoreDpds : true,
+                    babel: buildLib.babel
                 };
             } else {
                 console.log(('           Cannot found the build config: ' + name).red);
@@ -328,7 +342,13 @@ function buildBundle(name, callback, type) {
         //ar taskName = 'build:' + name + ':js';
         gulp.task('build:' + name + ':js', function () {
             var destPath = getBuildPath(build, 'js');
-            return gulp.src(source.js)
+            var gulpPipe = gulp.src(source.js);
+            if (build.babel) {
+                gulpPipe = gulpPipe.pipe(babel({
+                    presets: ['babel-preset-env']
+                }));
+            }
+            return gulpPipe
                 .pipe(concat(build.filename + '.js'))
                 .pipe(header(bannerContent))
                 .pipe(chmod(644))
@@ -474,7 +494,8 @@ gulp.task('build', function (callback) {
     if (name && name[0] === '-') name = name.substr(1);
     if (name === 'lib') name = 'seperate';
     var type = process.argv.length > 4 ? process.argv[4] : false;
-    if (type && type[0] === '-') type = type.substr(1);
+    if (type && (type === '-js' || type === '-less' || type === '-source')) type = type.substr(1);
+    else type = null;
     console.log('  BEGIN >> ' + (' Build ' + name.bold + ' ').inverse);
     buildBundle(name, function () {
         console.log('    END >> ' + (' Build ' + name.bold + ' completed :)').green.inverse);

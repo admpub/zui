@@ -87,7 +87,6 @@ KindEditor.plugin('table', function (K) {
             forecolor: '文字颜色',
             backcolor: '背景颜色',
             invalidBoderWidth: '边框大小必须为数字。'
-
         },
         zh_tw: {
             name: '表格',
@@ -135,7 +134,8 @@ KindEditor.plugin('table', function (K) {
         }
     };
     var $elements = [];
-    var lang = $.extend({}, allLangs.en, self.lang('table.'), allLangs[($.clientLang || $.zui.clientLang)()]);
+    var langName = $.clientLang ? $.clientLang() : ($.zui && $.zui.clientLang) ? $.zui.clientLang() : 'en';
+    var lang = ($.zui && $.zui.getLangData) ? $.zui.getLangData('kindeditor.advanceTable', langName, allLangs) : $.extend({}, allLangs.en, self.lang('table.'), allLangs[langName]);
     var defaultTableBorderColor = self.options.tableBorderColor || '#ddd';
 
     self.tableIdIndex = 0;

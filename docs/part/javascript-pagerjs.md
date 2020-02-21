@@ -317,7 +317,7 @@ $('#myPager').pager({
       <td>当前界面语言</td>
       <td>默认为 `'zh_cn'`</td>
       <td>
-        <p>所以可用的选项包括：</p>
+        <p>所有可用的选项包括：</p>
         <ul>
           <li>`zh_cn`：使用中文简体界面；</li>
           <li>`zh_tw`：使用中文繁体界面；</li>
@@ -351,7 +351,7 @@ $('#myPager').pager({
       <td><code>onRender</code></td>
       <td>当分页器界面更新并渲染完毕时调用</td>
       <td>默认为 `null`</td>
-      <td>该事件回调函数包含一个参数 `staet`，为当前最新的页码状态信息对象。</td>
+      <td>该事件回调函数包含一个参数 `state`，为当前最新的页码状态信息对象。</td>
     </tr>
   </tbody>
 </table>

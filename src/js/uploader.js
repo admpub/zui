@@ -115,8 +115,14 @@
         options = that.getOptions(options);
 
         // Init lang
-        var lang = $.isPlainObject(options.lang) ? ($.extend(true, {}, Uploader.LANG[lang.lang || $.zui.clientLang()], options.lang)) : Uploader.LANG[options.lang];
-        that.lang = lang;
+        var defaultLang = $.zui.clientLang ? $.zui.clientLang() : 'en';
+        var lang        = options.lang;
+        if ($.isPlainObject(lang)) {
+            lang = that.lang = $.extend(true, {}, $.zui.getLangData ? $.zui.getLangData(NAME, defaultLang, Uploader.LANG) : Uploader.LANG[defaultLang], lang);
+        } else {
+            lang = lang || defaultLang;
+            lang = that.lang = $.zui.getLangData ? $.zui.getLangData(NAME, lang, Uploader.LANG) : (Uploader.LANG[lang] || Uploader.LANG.en);
+        }
 
         // Init file list element
         var $this = that.$;
@@ -211,9 +217,15 @@
             $this.addClass('file-dragable');
         });
         $dropElement.on('dragleave.' + NAME + ' drop.' + NAME, function(e) {
-            $this.removeClass('file-drag-enter');
+            $this.removeClass('file-drag-enter').removeClass('file-dragable');
+            e.preventDefault();
+            e.stopPropagation();
         }).on('dragover.' + NAME + ' dragenter.' + NAME, function(e) {
             $this.addClass('file-drag-enter');
+        }).on('dragdrop.' + NAME + ' dragenter.' + NAME, function(e) {
+            $this.removeClass('file-drag-enter').removeClass('file-dragable');
+            e.preventDefault();
+            e.stopPropagation();
         });
 
         $list.on('click.' + NAME, '.btn-delete-file', function() {
@@ -900,4 +912,3 @@
         $('[data-ride="uploader"]').uploader();
     });
 }(jQuery, window, plupload, moxie, undefined));
-
