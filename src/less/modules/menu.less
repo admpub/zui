@@ -1,8 +1,8 @@
 /// ========================================================================
 /// ZUI: menu.less
-/// http://zui.sexy
+/// http://openzui.com
 /// ========================================================================
-/// Copyright 2014-2016 cnezsoft.com; Licensed MIT
+/// Copyright 2014-2020 cnezsoft.com; Licensed MIT
 /// ========================================================================
 
 
@@ -130,7 +130,7 @@
         > a {
           &,
           &:hover,
-          &:focus, {
+          &:focus {
             color: @color-fore;
             background-color: @color-back;
             border-color: @nav-primary-border-color;
@@ -145,10 +145,10 @@
           }
         }
 
-        
+
         &:last-child {
           > a {
-            .border-bottom-radius(0); 
+            .border-bottom-radius(0);
           }
 
           > .nav > li:last-child > a {

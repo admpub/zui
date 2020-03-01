@@ -1,6 +1,6 @@
 /* ========================================================================
  * ZUI: storeb.js
- * http://zui.sexy
+ * http://openzui.com
  * ========================================================================
  * Copyright (c) 2014-2016 cnezsoft.com; Licensed MIT
  * ======================================================================== */
@@ -16,7 +16,7 @@
 
     /* The Store object */
     var Store = function() {
-        this.slience = true;
+        this.silence = true;
         try {
             if((lsName in window) && window[lsName] && window[lsName].setItem) {
                 this.enable = true;
@@ -114,7 +114,7 @@
     /* Check enable status */
     Store.prototype.check = function() {
         if(!this.enable) {
-            if(!this.slience) throw new Error('Browser not support localStorage or enable status been set true.');
+            if(!this.silence) throw new Error('Browser not support localStorage or enable status been set true.');
         }
         return this.enable;
     };
@@ -127,18 +127,18 @@
         return 0;
     };
 
-    /* Remove item with browser localstorage native method */
+    /* Remove item with browser localStorage native method */
     Store.prototype.removeItem = function(key) {
         storage.removeItem(key);
         return this;
     };
 
-    /* Remove item with browser localstorage native method, same as removeItem */
+    /* Remove item with browser localStorage native method, same as removeItem */
     Store.prototype.remove = function(key) {
         return this.removeItem(key);
     };
 
-    /* Get item value with browser localstorage native method, and without deserialize */
+    /* Get item value with browser localStorage native method, and without deserialize */
     Store.prototype.getItem = function(key) {
         return storage.getItem(key);
     };
@@ -159,7 +159,7 @@
         return storage.key(index);
     };
 
-    /* Set item value with browser localstorage native method, and without serialize filter */
+    /* Set item value with browser localStorage native method, and without serialize filter */
     Store.prototype.setItem = function(key, val) {
         storage.setItem(key, val);
         return this;
@@ -172,7 +172,7 @@
         return this;
     };
 
-    /* Clear all items with browser localstorage native method */
+    /* Clear all items with browser localStorage native method */
     Store.prototype.clear = function() {
         storage.clear();
         return this;
@@ -218,4 +218,3 @@
         store: new Store()
     });
 }(window, jQuery));
-
