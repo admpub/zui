@@ -5,7 +5,7 @@
       "pver": "1.12.4",
       "ver": "1.0.0",
       "src": {
-        "resource": ["assets/jquery-3.4.1.min.js", "assets/jquery-migrate-3.1.0.js", "assets/jquery-migrate-3.1.0.min.js"]
+        "resource": ["assets/jquery.js", "assets/jquery-3.4.1.min.js", "assets/jquery-migrate-3.1.0.js", "assets/jquery-migrate-3.1.0.min.js"]
       },
       "desc": "ZUI的绝大部分JS组件都依赖于jQuery",
       "website": "http://jquery.com/",
@@ -1447,6 +1447,15 @@
       "ver": "1.9.2",
       "ignoreDpds": false
     },
+    "picker": {
+      "name": "选择器",
+      "src": {
+        "js": ["src/js/picker.js"],
+        "less": ["src/less/components/picker.less"]
+      },
+      "ver": "1.9.3",
+      "ignoreDpds": false
+    },
     "lang.ja": {
       "name": "日语插件",
       "src": {
@@ -1528,7 +1537,7 @@
     },
     "seperate": {
       "title": "Seperate bundles",
-      "bundles": ["jquery", "calendar", "kindeditor", "datetimepicker", "chosen", "chosenicons", "imgcutter", "datatable", "datagrid", "ieonly", "chart", "array", "hotkey", "board", "tabs", "migrate1.2", "clipboard", "prettify", "sortable", "selectable", "colorpicker", "colorset.js", "imgready", "dashboard", "bootbox", "ueditor", "uploader", "treemap", "ajaxFake", "markdoc", "contextmenu"]
+      "bundles": ["jquery", "calendar", "kindeditor", "datetimepicker", "chosen", "chosenicons", "imgcutter", "datatable", "datagrid", "ieonly", "chart", "array", "hotkey", "board", "tabs", "migrate1.2", "clipboard", "prettify", "sortable", "selectable", "colorpicker", "colorset.js", "imgready", "dashboard", "bootbox", "ueditor", "uploader", "treemap", "ajaxFake", "markdoc", "contextmenu", "picker"]
     },
     "dist": {
       "title": "Dist bundles",

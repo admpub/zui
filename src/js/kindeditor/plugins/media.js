@@ -24,7 +24,7 @@ KindEditor.plugin('media', function(K) {
                 //url
                 '<div class="ke-dialog-row">',
                 '<label for="keUrl" style="width:60px;">' + lang.url + '</label>',
-                '<input class="ke-input-text" type="text" id="keUrl" name="url" value="" style="width:160px;" /> &nbsp;',
+                '<input class="ke-input-text" type="text" id="keUrl" name="url" value="" placeholder="' + lang.urlTip + '" style="width:160px;" /> &nbsp;',
                 '<input type="button" class="ke-upload-button" value="' + lang.upload + '" /> &nbsp;',
                 '<span class="ke-button-common ke-button-outer">',
                 '<input type="button" class="ke-button-common ke-button" name="viewServer" value="' + lang.viewServer + '" />',
@@ -40,6 +40,11 @@ KindEditor.plugin('media', function(K) {
                 '<label for="keHeight" style="width:60px;">' + lang.height + '</label>',
                 '<input type="text" id="keHeight" class="ke-input-text ke-input-number" name="height" value="400" maxlength="4" />',
                 '</div>',
+                //controls
+                '<div class="ke-dialog-row hidden">',
+                '<label for="keControls">' + lang.controls + '</label>',
+                '<input type="checkbox" id="keControls" checked name="controls" value="true" /> ',
+                '</div>',
                 //autostart
                 '<div class="ke-dialog-row">',
                 '<label for="keAutostart">' + lang.autostart + '</label>',
@@ -50,7 +55,7 @@ KindEditor.plugin('media', function(K) {
             var dialog = self.createDialog({
                     name: name,
                     width: 450,
-                    height: 230,
+                    height: 240,
                     title: self.lang(name),
                     body: html,
                     yesBtn: {
@@ -79,8 +84,8 @@ KindEditor.plugin('media', function(K) {
                                 type: K.mediaType(url),
                                 width: width,
                                 height: height,
-                                autostart: autostartBox[0].checked ? 'true' : 'false',
-                                loop: 'true'
+                                autoplay: !!autostartBox[0].checked,
+                                controls: !!controlsBox[0].checked,
                             });
                             self.insertHtml(html).hideDialog().focus();
                         }
@@ -91,6 +96,7 @@ KindEditor.plugin('media', function(K) {
                 viewServerBtn = K('[name="viewServer"]', div),
                 widthBox = K('[name="width"]', div),
                 heightBox = K('[name="height"]', div),
+                controlsBox = K('[name="controls"]', div),
                 autostartBox = K('[name="autostart"]', div);
             urlBox.val('http://');
 
@@ -157,7 +163,8 @@ KindEditor.plugin('media', function(K) {
                 urlBox.val(attrs.src);
                 widthBox.val(K.removeUnit(img.css('width')) || attrs.width || 0);
                 heightBox.val(K.removeUnit(img.css('height')) || attrs.height || 0);
-                autostartBox[0].checked = (attrs.autostart === 'true');
+                autostartBox[0].checked = (attrs.autoplay !== undefined && attrs.autoplay !== 'false');
+                controlsBox[0].checked = (attrs.controls !== undefined && attrs.controls !== 'false');
             }
             urlBox[0].focus();
             urlBox[0].select();

@@ -1,6 +1,6 @@
 {
-  "version": "1.9.1.1",
-  "updateTime": "2019-03-12 13:42",
+  "version": "1.9.2.0",
+  "updateTime": "2020-07-09 13:57",
   "chapters": {
     "contribution": {
       "name": "贡献",
@@ -179,11 +179,11 @@
         },
         {
           "id": "xuanxuan",
-          "name": "喧喧：开源免费IM通讯方案",
-          "desc": "开源、免费、安全、跨平台的即时通讯方案",
-          "icon": "喧",
-          "url": "http://xuan.im",
-          "version": "1.6.0",
+          "name": "喧喧：专注于协同的聊天软件",
+          "desc": "免费、安全、跨平台的即时通讯方案",
+          "icon": "docs/img/xuan_icon.png",
+          "url": "http://xuanim.com",
+          "version": "3.2.2",
           "topics": [],
           "filter": "xuanxuan im"
         },
@@ -220,32 +220,18 @@
           "filter": "zdoo ezsoft cloud yunduan docker"
         },
         {
-          "id": "chanzhi",
-          "name": "蝉知",
-          "desc": "为天下企业提供专业的营销工具！",
-          "icon": "docs/img/chanzhi_icon.png",
-          "url": "http://www.chanzhi.org/",
+          "id": "zsite",
+          "name": "ZSITE",
+          "desc": "为您构建全网营销平台",
+          "icon": "docs/img/zsite_icon.png",
+          "url": "https://www.zsite.com/",
           "topics": [
             {
-              "name": "臻网建站",
-              "url": "http://www.zsite.com"
+              "name": "构建全网营销平台",
+              "url": "https://www.zsite.com/"
             }
           ],
           "filter": "chanzhi cz"
-        },
-        {
-          "id": "ranzhi",
-          "name": "然之",
-          "desc": "中小企业一体化协同管理最佳解决方案！",
-          "icon": "docs/img/ranzhi_icon.png",
-          "url": "https://www.ranzhico.com/",
-          "topics": [
-            {
-              "name": "云然之",
-              "url": "https://www.ranzhico.com/ranzhisaas-plans.html"
-            }
-          ],
-          "filter": "ranzhi rz"
         }
       ],
       "filter": "tuijian tj"
@@ -1076,6 +1062,9 @@
           "name": "导航",
           "update": "1.6.0",
           "topics": [
+            {
+              "name": "基础样式"
+            },
             {
               "name": "主要导航"
             },

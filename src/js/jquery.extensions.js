@@ -29,7 +29,7 @@
     var lastUuidAmend = 0;
     $.zui({
         uuid: function(asNumber) {
-            var uuidNumber = (Date.now() - 1580890015292) * 100000000 + Math.floor(Math.random() * 100000) * 1000 + (lastUuidAmend++) % 1000;
+            var uuidNumber = (Date.now() - 1580890015292) * 10e7 + Math.floor(Math.random() * 10e4) * 10e2 + (lastUuidAmend++) % 10e2;
             return asNumber ? uuidNumber : uuidNumber.toString(36);
         },
 
@@ -47,6 +47,7 @@
 
         strCode: function(str) {
             var code = 0;
+            if (typeof str !== 'string') str = String(str);
             if(str && str.length) {
                 for(var i = 0; i < str.length; ++i) {
                     code += i * str.charCodeAt(i);
@@ -204,6 +205,32 @@
                 return $.zui.addLangData.apply(null, arguments);
             }
             return $.zui.getLangData.apply(null, arguments);
+        },
+
+        _scrollbarWidth: 0,
+        checkBodyScrollbar: function() {
+            if(document.body.clientWidth >= window.innerWidth) return 0;
+            if(!$.zui._scrollbarWidth) {
+                var scrollDiv = document.createElement('div');
+                scrollDiv.className = 'scrollbar-measure';
+                document.body.appendChild(scrollDiv);
+                $.zui._scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+                document.body.removeChild(scrollDiv);
+            }
+            return $.zui._scrollbarWidth;
+        },
+        fixBodyScrollbar: function() {
+            if($.zui.checkBodyScrollbar()) {
+                var $body = $('body');
+                var bodyPad = parseInt(($body.css('padding-right') || 0), 10);
+                if($.zui._scrollbarWidth) {
+                    $body.css({paddingRight: bodyPad + $.zui._scrollbarWidth, overflowY: 'hidden'});
+                }
+                return true;
+            }
+        },
+        resetBodyScrollbar: function() {
+            $('body').css({paddingRight: '', overflowY: ''});
         },
     });
 

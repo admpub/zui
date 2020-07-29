@@ -2,7 +2,7 @@
  * ZUI: Kindeditor plugin - placeholder
  * http://openzui.com
  * ========================================================================
- * Copyright (c) 2019-2019 cnezsoft.com; Licensed MIT
+ * Copyright (c) 2019-2020 cnezsoft.com; Licensed MIT
  * ======================================================================== */
 
 KindEditor.EditorClass.prototype.setPlaceholder = function(placeholder, asHtml) {
@@ -26,7 +26,7 @@ KindEditor.EditorClass.prototype.setPlaceholder = function(placeholder, asHtml) 
 };
 
 KindEditor.EditorClass.prototype.getPlaceholder = function(asHtml) {
-    return self.$placeholder && self.$placeholder[asHtml ? 'html' : 'text']();
+    return this.$placeholder ? this.$placeholder[asHtml ? 'html' : 'text']() : '';
 };
 
 KindEditor.plugin('placeholder', function(K) {

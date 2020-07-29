@@ -1,5 +1,5 @@
 /*!
- * ZUI: Standard edition - v1.9.1 - 2020-02-26
+ * ZUI: Standard edition - v1.9.2 - 2020-07-09
  * http://openzui.com
  * GitHub: https://github.com/easysoft/zui.git 
  * Copyright (c) 2020 cnezsoft.com; Licensed MIT
@@ -980,6 +980,13 @@ textarea {
 ol,
 ul {
   padding-left: 20px;
+  }
+.scrollbar-measure {
+  position: absolute;
+  top: -9999px;
+  width: 50px;
+  height: 50px;
+  overflow: scroll;
   }
 .container,
 .container-fluid,
@@ -3983,9 +3990,6 @@ a .icon-spin {
 .icon-weibo:before {
   content: '\e746';
   }
-.icon-renren:before {
-  content: '\e747';
-  }
 .icon-chrome:before {
   content: '\e76c';
   }
@@ -4064,10 +4068,9 @@ a .icon-spin {
   display: -webkit-flex;
   display: -ms-flexbox;
   display:         flex;
-  padding-top: 50px;
   font-size: 12px;
   content: attr(data-loading);
-  background-color: rgba(255, 255, 255, .65);
+  background-color: rgba(255, 255, 255, .8);
 
   -webkit-box-align: center;
   -webkit-align-items: center;
@@ -4077,6 +4080,9 @@ a .icon-spin {
   -webkit-justify-content: center;
   -ms-flex-pack: center;
           justify-content: center;
+  }
+.load-indicator[data-loading]:before {
+  padding-top: 50px;
   }
 .load-indicator:after {
   top: 50%;
@@ -6108,8 +6114,17 @@ pre code {
 .nav-default > li {
   float: left;
   }
-.nav-default > li > a {
+.nav-simple > li {
+  float: left;
+  }
+.nav-simple > li > a {
   border-radius: 4px;
+  }
+.nav-simple > li.active > a,
+.nav-simple > li.active > a:hover,
+.nav-simple > li.active > a:focus {
+  color: #3280fc;
+  background-color: #ebf2f9;
   }
 .nav-pills > li {
   float: left;
@@ -7052,13 +7067,6 @@ tbody.collapse.in {
 .modal-footer .btn-block + .btn-block {
   margin-left: 0;
   }
-.modal-scrollbar-measure {
-  position: absolute;
-  top: -9999px;
-  width: 50px;
-  height: 50px;
-  overflow: scroll;
-  }
 @media (min-width: 768px) {
   .modal-dialog {
     width: 600px;
@@ -7089,6 +7097,9 @@ tbody.collapse.in {
   bottom: 0;
   left: 0;
   overflow-y: auto;
+  }
+.modal-scroll-inside {
+  overflow: hidden!important;
   }
 .body-modal-scroll-inside {
   overflow: auto;
@@ -7599,8 +7610,8 @@ tbody.collapse.in {
   border: 1px solid #cbcbcb;
   border: 1px solid rgba(0, 0, 0, .15);
   border-radius: 4px;
-  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-          box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+  -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .12), 0 1px 3px rgba(0, 0, 0, .1);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, .12), 0 1px 3px rgba(0, 0, 0, .1);
   }
 .dropdown-menu.pull-right {
   right: 0;

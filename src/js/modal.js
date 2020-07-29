@@ -46,6 +46,14 @@
                     that.$element.trigger('loaded.' + zuiname)
                 })
         }
+
+        if (options.scrollInside) {
+            $(window).on('resize.' + zuiname, function() {
+                if (that.isShown) {
+                    that.adjustPosition();
+                }
+            });
+        }
     }
 
     Modal.VERSION = '3.2.0'
@@ -75,7 +83,7 @@
         return this.isShown ? this.hide() : this.show(_relatedTarget, position)
     }
 
-    Modal.prototype.ajustPosition = function(position) {
+    Modal.prototype.adjustPosition = function(position) {
         var that = this;
         var options = that.options;
         if(position === undefined) position = options.position;
@@ -90,12 +98,26 @@
         var $body = $dialog.find('.modal-body').css(bodyCss);
         if (options.scrollInside && $body.length) {
             var headerHeight = options.headerHeight;
+            var footerHeight = options.footerHeight;
+            var $header = $dialog.find('.modal-header');
+            var $footer = $dialog.find('.modal-footer');
             if (typeof headerHeight !== 'number') {
-                headerHeight = $dialog.find('.modal-header').height();
-            } else if ($.isFunction(headerHeight)) {
-                headerHeight = headerHeight($header);
+                if ($header.length) {
+                    headerHeight = $header.outerHeight();
+                } else if ($.isFunction(headerHeight)) {
+                    headerHeight = headerHeight($header);
+                } else {
+                    headerHeight = 0;
+                }
             }
-            bodyCss.maxHeight = winHeight - headerHeight;
+            if (typeof footerHeight !== 'number' && $footer.length) {
+                footerHeight = $footer.outerHeight();
+            } else if ($.isFunction(footerHeight)) {
+                footerHeight = footerHeight($footer);
+            } else {
+                footerHeight = 0;
+            }
+            bodyCss.maxHeight = winHeight - headerHeight - footerHeight;
             bodyCss.overflow = $body[0].scrollHeight > bodyCss.maxHeight ? 'auto' : 'visible';
             $body.css(bodyCss);
         }
@@ -130,7 +152,7 @@
         }
     }
 
-    Modal.prototype.setMoveale = function() {
+    Modal.prototype.setMoveable = function() {
         if(!$.fn.draggable) console.error('Moveable modal requires draggable.js.');
         var that = this;
         var options = that.options;
@@ -177,12 +199,11 @@
 
         that.isShown = true
 
-        if(that.options.moveable) that.setMoveale();
+        if(that.options.moveable) that.setMoveable();
 
-        that.checkScrollbar()
         if (that.options.backdrop !== false) {
+            that.setScrollbar();
             that.$body.addClass('modal-open')
-            that.setScrollbar()
         }
 
         that.escape()
@@ -211,7 +232,7 @@
                 .addClass('in')
                 .attr('aria-hidden', false)
 
-            that.ajustPosition(position);
+            that.adjustPosition(position);
 
             that.enforceFocus()
 
@@ -346,26 +367,18 @@
         }
     }
 
-    Modal.prototype.checkScrollbar = function() {
-        if(document.body.clientWidth >= window.innerWidth) return
-        this.scrollbarWidth = this.scrollbarWidth || this.measureScrollbar()
-    }
-
     Modal.prototype.setScrollbar = function() {
-        var bodyPad = parseInt((this.$body.css('padding-right') || 0), 10)
-        if(this.scrollbarWidth) {
-            var paddingRight = bodyPad + this.scrollbarWidth;
-            this.$body.css('padding-right', paddingRight)
+        if($.zui.fixBodyScrollbar()) {
             if (this.options.onSetScrollbar) {
-                this.options.onSetScrollbar(paddingRight)
+                this.options.onSetScrollbar(paddingRight);
             }
         }
     }
 
     Modal.prototype.resetScrollbar = function() {
-        this.$body.css('padding-right', '')
+        $.zui.resetBodyScrollbar();
         if (this.options.onSetScrollbar) {
-            this.options.onSetScrollbar('')
+            this.options.onSetScrollbar('');
         }
     }
 

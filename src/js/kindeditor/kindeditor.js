@@ -87,12 +87,12 @@
 
     function _addUnit(val, unit) {
         unit = unit || 'px';
-        return val && /^\d+$/.test(val) ? val + unit : val;
+        return val && /^[\d\.]+$/.test(val) ? val + unit : val;
     }
 
     function _removeUnit(val) {
         var match;
-        return val && (match = /(\d+)/.exec(val)) ? parseInt(match[1], 10) : 0;
+        return val && (match = /([\d\.]+)/.exec(val)) ? parseInt(match[1], 10) : 0;
     }
 
     function _escape(val) {
@@ -320,6 +320,9 @@
             ],
             a: ['id', 'class', 'href', 'target', 'name'],
             embed: ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', 'quality', '.width', '.height', 'align', 'allowscriptaccess'],
+            audio: ['id', 'class', 'width', 'src', 'height', 'loop', 'preload', 'autoplay', 'controls', 'crossorigin', 'currentTime', 'duration', 'muted'],
+            video: ['id', 'class', 'width', 'src', 'height', 'loop', 'preload', 'autoplay', 'controls', 'crossorigin', 'currentTime', 'duration', 'muted', 'buffered', 'playsinline', 'played', 'poster'],
+            source: ['src', 'type'],
             img: ['id', 'class', 'src', 'width', 'height', 'border', 'alt', 'title', 'align', '.width', '.height', '.border'],
             'p,ol,ul,li,blockquote,h1,h2,h3,h4,h5,h6': [
                 'id', 'class', 'align', '.text-align', '.color', '.background-color', '.font-size', '.font-family', '.background',
@@ -656,13 +659,14 @@
         return list;
     }
 
-    function _getAttrList(tag) {
+    function _getAttrList(tag, emptyValue) {
         var list = {},
             reg = /\s+(?:([\w\-:]+)|(?:([\w\-:]+)=([^\s"'<>]+))|(?:([\w\-:"]+)="([^"]*)")|(?:([\w\-:"]+)='([^']*)'))(?=(?:\s|\/|>)+)/g,
             match;
+        if (emptyValue === undefined) emptyValue = '';
         while((match = reg.exec(tag))) {
             var key = (match[1] || match[2] || match[4] || match[6]).toLowerCase(),
-                val = (match[2] ? match[3] : (match[4] ? match[5] : match[7])) || '';
+                val = (match[2] ? match[3] : (match[4] ? match[5] : match[7])) || emptyValue;
             list[key] = val;
         }
         return list;
@@ -877,11 +881,12 @@
                 prevTagIsBlockEnd = null;
             }
             if(attr !== '') {
-                var attrMap = _getAttrList(full);
+                var attrMap = _getAttrList(full, true);
                 if(tagName === 'font') {
                     var fontStyleMap = {},
                         fontStyle = '';
                     _each(attrMap, function(key, val) {
+                        if(val === true) val = '';
                         if(key === 'color') {
                             fontStyleMap.color = val;
                             delete attrMap[key];
@@ -913,6 +918,7 @@
                     attrMap.style = fontStyle;
                 }
                 _each(attrMap, function(key, val) {
+                    if(val === true) val = '';
                     if(_FILL_ATTR_MAP[key]) {
                         attrMap[key] = key;
                     }
@@ -940,7 +946,11 @@
                 });
                 attr = '';
                 _each(attrMap, function(key, val) {
-                    if(key === 'style' && val === '') {
+                    if(val === false || (key === 'style' && val === '')) {
+                        return;
+                    }
+                    if (val === true) {
+                        attr += ' ' + key;
                         return;
                     }
                     val = val.replace(/"/g, '&quot;');
@@ -975,43 +985,108 @@
     }
 
     function _mediaType(src) {
-        if(/\.(rm|rmvb)(\?|$)/i.test(src)) {
-            return 'audio/x-pn-realaudio-plugin';
+        if(/\.(mp4)(\?|$)/i.test(src)) {
+            return 'video/mp4';
         }
-        if(/\.(swf|flv)(\?|$)/i.test(src)) {
-            return 'application/x-shockwave-flash';
+        if(/\.(webm)(\?|$)/i.test(src)) {
+            return 'video/webm';
         }
-        return 'video/x-ms-asf-plugin';
+        if(/\.(ogg)(\?|$)/i.test(src)) {
+            return 'video/ogg';
+        }
+        if(/\.(mov)(\?|$)/i.test(src)) {
+            return 'video/quicktime';
+        }
+        if(/\.(mp3)(\?|$)/i.test(src)) {
+            return 'audio/mp3';
+        }
+        if(/\.(wav)(\?|$)/i.test(src)) {
+            return 'audio/wav';
+        }
+        if(/\.(flac)(\?|$)/i.test(src)) {
+            return 'audio/flac';
+        }
+        return 'video/application';
     }
 
     function _mediaClass(type) {
-        if(/realaudio/i.test(type)) {
-            return 'ke-rm';
+        if(/audio/i.test(type)) {
+            return 'ke-audio';
         }
-        if(/flash/i.test(type)) {
-            return 'ke-flash';
+        if(/video/i.test(type)) {
+            return 'ke-video';
         }
         return 'ke-media';
     }
 
     function _mediaAttrs(srcTag) {
-        return _getAttrList(unescape(srcTag));
+        var srcs = [];
+        srcTag = unescape(srcTag).replace(/<source [^>]*>/ig, function(sourceTag) {
+            var $source = $(sourceTag);
+            var src = $source.attr('src');
+            var type = $source.attr('type');
+            if(type) src += '#' + type;
+            srcs.push(src);
+            return '';
+        });
+        var attrs = _getAttrList(srcTag);
+        if(srcs.length) attrs.src = srcs.join(',');
+        return attrs;
     }
 
-    function _mediaEmbed(attrs) {
-        var html = '<embed ';
-        _each(attrs, function(key, val) {
-            html += key + '="' + val + '" ';
-        });
-        html += '/>';
-        return html;
+    function _mediaEmbed(attrs, mediaType) {
+        var htmls;
+        if(mediaType === 'media' || mediaType === 'video' || mediaType === 'audio') {
+            mediaType = mediaType === 'video' || (attrs.type && attrs.type.indexOf('video') === 0) ? 'video' : 'audio';
+            htmls = [
+                '<', mediaType, ' '
+            ];
+            var srcs = (attrs.src || '').split(',');
+            var autoPlayEnabled;
+            var mutedSetted;
+            _each(attrs, function(key, val) {
+                if (key === 'src' || val === false) {
+                    return;
+                }
+                if (val === true || /^(controls|autoplay|loop|muted)$/i.test(key)) {
+                    if (val !== 'false') {
+                        htmls.push(key + ' ');
+                        if (key === 'autoplay') autoPlayEnabled = true;
+                        else if (key === 'muted') mutedSetted = true;
+                    }
+                } else {
+                    htmls.push(key, '="', val, '" ');
+                }
+            });
+            if (autoPlayEnabled && !mutedSetted) {
+                htmls.push('muted ');
+            }
+            if (srcs.length > 1) {
+                htmls.push('>');
+                _each(srcs, function(_, val) {
+                    var srcType = val.split('#');
+                    htmls.push('<source src="', srcType[0], '"', srcType.length > 1 ? (' type="' + srcType[1] + '"') : '', ' />');
+                });
+                htmls.push('</', mediaType, '>');
+            } else {
+                if(srcs.length) htmls.push('src="', srcs[0], '" ');
+                htmls.push('></', mediaType, '>');
+            }
+        } else {
+            htmls = ['<embed '];
+            _each(attrs, function(key, val) {
+                htmls.push(key, '="', val, '" ');
+            });
+            htmls.push('/>');
+        }
+        return htmls.join('');
     }
 
     function _mediaImg(blankPath, attrs) {
         var width = attrs.width,
             height = attrs.height,
             type = attrs.type || _mediaType(attrs.src),
-            srcTag = _mediaEmbed(attrs),
+            srcTag = _mediaEmbed(attrs, type),
             style = '';
         if(/\D/.test(width)) {
             style += 'width:' + width + ';';
@@ -3730,14 +3805,14 @@
             var self = this;
             updateProp = _undef(updateProp, true);
             if(x !== null) {
-                x = x < 0 ? 0 : _addUnit(x);
+                x = x < 0 ? 0 : _addUnit(Math.floor(x));
                 self.div.css('left', x);
                 if(updateProp) {
                     self.x = x;
                 }
             }
             if(y !== null) {
-                y = y < 0 ? 0 : _addUnit(y);
+                y = y < 0 ? 0 : _addUnit(Math.floor(y));
                 self.div.css('top', y);
                 if(updateProp) {
                     self.y = y;
@@ -3834,30 +3909,17 @@
             'img {border:0;}',
             'noscript {display:none;}',
             'table.ke-zeroborder td {border:1px dotted #AAA;}',
-            'img.ke-flash {',
+            'img.ke-media, img.ke-audio, img.ke-video {',
             ' border:1px solid #AAA;',
-            ' background-image:url(' + themesPath + 'common/flash.gif);',
+            ' background-image:url(' + themesPath + 'common/media.png);',
             ' background-position:center center;',
             ' background-repeat:no-repeat;',
+            ' background-color:#f1f1f1;',
             ' width:100px;',
             ' height:100px;',
             '}',
-            'img.ke-rm {',
-            ' border:1px solid #AAA;',
-            ' background-image:url(' + themesPath + 'common/rm.gif);',
-            ' background-position:center center;',
-            ' background-repeat:no-repeat;',
-            ' width:100px;',
-            ' height:100px;',
-            '}',
-            'img.ke-media {',
-            ' border:1px solid #AAA;',
-            ' background-image:url(' + themesPath + 'common/media.gif);',
-            ' background-position:center center;',
-            ' background-repeat:no-repeat;',
-            ' width:100px;',
-            ' height:100px;',
-            '}',
+            'img.ke-audio {background-image:url(' + themesPath + 'common/audio.png); height: 54px!important}',
+            'img.ke-video {background-image:url(' + themesPath + 'common/video.png)}',
             'img.ke-anchor {',
             ' border:1px dashed #666;',
             ' width:16px;',
@@ -6088,7 +6150,7 @@
         };
         self.plugin.getSelectedMedia = function() {
             return _getImageFromRange(self.edit.cmd.range, function(img) {
-                return img[0].className == 'ke-media' || img[0].className == 'ke-rm';
+                return img[0].className == 'ke-media' || img[0].className == 'ke-video' || img[0].className == 'ke-audio';
             });
         };
         self.plugin.getSelectedAnchor = function() {
@@ -6246,7 +6308,7 @@
             return html.replace(/(<(?:noscript|noscript\s[^>]*)>)([\s\S]*?)(<\/noscript>)/ig, function($0, $1, $2, $3) {
                     return $1 + _unescape($2).replace(/\s+/g, ' ') + $3;
                 })
-                .replace(/<img[^>]*class="?ke-(flash|rm|media)"?[^>]*>/ig, function(full) {
+                .replace(/<img[^>]*class="?ke-(media|video|audio)"?[^>]*>/ig, function(full, $1) {
                     var imgAttrs = _getAttrList(full);
                     var styles = _getCssList(imgAttrs.style || '');
                     var attrs = _mediaAttrs(imgAttrs['data-ke-tag']);
@@ -6260,7 +6322,8 @@
                     }
                     attrs.width = _undef(imgAttrs.width, width);
                     attrs.height = _undef(imgAttrs.height, height);
-                    return _mediaEmbed(attrs);
+
+                    return _mediaEmbed(attrs, $1);
                 })
                 .replace(/<img[^>]*class="?ke-anchor"?[^>]*>/ig, function(full) {
                     var imgAttrs = _getAttrList(full);
@@ -6299,6 +6362,26 @@
                     attrs.src = _undef(attrs.src, '');
                     attrs.width = _undef(attrs.width, 0);
                     attrs.height = _undef(attrs.height, 0);
+                    return _mediaImg(self.themesPath + 'common/blank.gif', attrs);
+                })
+                .replace(/<(video|audio)[^>]*>((\s*<source [^>]*>\s*)*)(?:<\/(video|audio)>)?/ig, function(full, $1, $2) {
+                    var attrs = _getAttrList($2 ? full.replace($2, '') : full);
+                    if($2) {
+                        var srcs = [];
+                        $($2).filter('source').each(function() {
+                            var $source = $(this);
+                            var src = $source.attr('src');
+                            var type = $source.attr('type');
+                            if(type) src += '#' + type;
+                            srcs.push(src);
+                        });
+                        attrs.src = srcs.join(',');
+                    } else {
+                        attrs.src = _undef(attrs.src, '');
+                    }
+                    attrs.width = _undef(attrs.width, 0);
+                    attrs.height = _undef(attrs.height, 0);
+                    attrs.type = $1;
                     return _mediaImg(self.themesPath + 'common/blank.gif', attrs);
                 })
                 .replace(/<a[^>]*name="([^"]+)"[^>]*>(?:<\/a>)?/ig, function(full) {

@@ -506,6 +506,7 @@ function startWatchSrc(name, callback) {
     if (name === 'lib') name = 'seperate';
     var build = builds[name];
     var srcDir = build && build.srcDir || './src';
+    console.log(`           Start watching ${srcDir.blue}`);
     gulp.watch([srcDir + "/less/**/*"], function (event) {
         buildBundle(name, function () {
             callback && callback(event, 'less');
@@ -536,7 +537,7 @@ gulp.task('watch', function (callback) {
 });
 
 ['dist', 'doc', 'theme', 'lib'].forEach(function (name) {
-    var depsTasks = (name == 'dist' || name == 'doc') ? ['minJSON'] : [];
+    var depsTasks = (name == 'dist' || name == 'doc') ? ['minJSON', 'minJSON-en'] : [];
     gulp.task(name, depsTasks, function (callback) {
         console.log('  BEGIN >> ' + (' Build ' + name.bold + ' ').inverse);
         buildBundle(name == 'lib' ? 'seperate' : name, function () {
@@ -550,16 +551,18 @@ gulp.task('watch', function (callback) {
     });
 });
 
-gulp.task('minJSON', function (cb) {
-    gulp.src(['./docs/index.json', './docs/icons.json'])
+gulp.task('minJSON', function(cb) {
+    gulp.src(['./docs/index.json', './docs/icons.json', 'zui.json'])
         .pipe(jsonminify())
         .pipe(rename({ suffix: '.min' }))
-        .pipe(gulp.dest('./docs/'));
-    gulp.src(['zui.json'])
+        .pipe(gulp.dest('./docs/')).on('end', cb);
+});
+
+gulp.task('minJSON-en', function(cb) {
+    gulp.src(['./en/docs/index.json', './docs/icons.json', 'zui.json'])
         .pipe(jsonminify())
         .pipe(rename({ suffix: '.min' }))
-        .pipe(gulp.dest('./docs/'));
-    cb();
+        .pipe(gulp.dest('./en/docs/')).on('end', cb);
 });
 
 gulp.task('prettify:js', function () {
